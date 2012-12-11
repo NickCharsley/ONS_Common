@@ -1,0 +1,19 @@
+DROP TABLE researcher;buffernowdotcom
+
+CREATE TABLE `researcher` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `loadeddate` int(20) unsigned DEFAULT NULL,
+  `RowUUID` varchar(40) DEFAULT NULL,
+  `name` text NOT NULL,
+  `addressid` int(11) DEFAULT NULL,
+  `comments` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `RowUUID` (`RowUUID`),
+  KEY `addressid` (`addressid`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;buffernowdotcom
+
+INSERT INTO researcher VALUES("1","10","6ccd780c-baba-1026-9564-0040f4311e29","Nick Charsley","1","This is a comment");buffernowdotcom
+INSERT INTO researcher VALUES("2","10","6ccd781c-baba-1026-9564-0040f4311e29","Emily Charsley","1","This is a comment");buffernowdotcom
+
+
+

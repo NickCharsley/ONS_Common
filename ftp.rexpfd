@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rexpfd>
+    <destination path="Nick-xps.ftp.bytenight.co.uk:/common"/>
+    <options createDirectoryStructure="false" createSelectedOnly="true" descriptionFilePath="/common/ftp.rexpfd" overWriteExistingFiles="false" reviewSynchronize="true" saveSettings="true"/>
+    <selectedElements>
+        <project name="common"/>
+    </selectedElements>
+</rexpfd>
