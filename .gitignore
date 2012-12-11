@@ -1,8 +1,7 @@
 #################
 ## Eclipse
 #################
-
-php_error.log
+php_error*.*
 *.pydevproject
 .project
 .metadata
