@@ -1,7 +1,7 @@
 #################
 ## Eclipse
 #################
-php_error.*
+
 *.pydevproject
 .project
 .metadata
@@ -162,6 +162,6 @@ pip-log.txt
 .DS_Store
 
 
-errorLogs/
+errorLogs/*
 sencha/
 *.log
