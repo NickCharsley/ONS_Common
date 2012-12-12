@@ -337,12 +337,71 @@ function getHTMLElement($data,$element,$class=""){
 
  function PEAR_ErrorToPEAR_Exception($err)
  {
+ 	Krumo($err);
  	if ($err->getCode()) {
  		throw new PEAR_Exception($err->getMessage(),
  				$err->getCode());
  	}
  	throw new PEAR_Exception($err->getMessage());
  }
+
+ function exception_handler($exception) {
+ 	//If we have a xdebug_message we will just use it
+ 	if (isset($exception->xdebug_message)){
+ 		print "<font size='1'><table class='xdebug-error xe-parse-error' dir='ltr' border='1' cellspacing='0' cellpadding='1'>";
+ 		print $exception->xdebug_message;
+ 		print "</table>";
+ 		return;
+ 	}
+ 	
+ // these are our templates
+    $traceline = "#%s %s(%s): %s(%s)";
+    $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
+
+    // alter your trace as you please, here
+    $trace = $exception->getTrace();
+    Krumo($exception);
+    foreach ($trace as $key => $stackPoint) {
+        // I'm converting arguments to their type
+        // (prevents passwords from ever getting logged as anything other than 'string')
+        $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
+    }
+
+    // build your tracelines
+    $result = array();
+    foreach ($trace as $key => $stackPoint) {
+        $result[] = sprintf(
+            $traceline,
+            $key,
+            (isset($stackPoint['file'])?$stackPoint['file']:'<?>'),
+            (isset($stackPoint['line'])?$stackPoint['line']:'<?>'),
+            (isset($stackPoint['function'])?$stackPoint['function']:'<?>'),
+            (isset($stackPoint['args'])?implode(', ', $stackPoint['args']):'<?>')
+        );
+    }
+    // trace always ends with {main}
+    $result[] = '#' . ++$key . ' {main}';
+
+    // write tracelines into main template
+    $msg = sprintf(
+        $msg,
+        get_class($exception),
+        $exception->getMessage(),
+        $exception->getFile(),
+        $exception->getLine(),
+        implode("\n", $result),
+        $exception->getFile(),
+        $exception->getLine()
+    );
+
+    // log or echo as you please
+    error_log($msg);
+	print($msg);    
+ }
+ 
+ set_exception_handler('exception_handler');
+ 
  
  debug_error_log("Exit ".__FILE__);
 ?>
+

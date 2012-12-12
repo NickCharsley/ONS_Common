@@ -1,7 +1,7 @@
 #################
 ## Eclipse
 #################
-php_error*.*
+php_error.*
 *.pydevproject
 .project
 .metadata
@@ -15,7 +15,6 @@ local.properties
 .classpath
 .settings/
 .loadpath
-
 # External tool builders
 .externalToolBuilders/
 
@@ -161,3 +160,8 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+
+errorLogs/
+sencha/
+*.log
