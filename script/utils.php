@@ -398,6 +398,13 @@ function getHTMLElement($data,$element,$class=""){
     error_log($msg);
 	print($msg);    
  }
+
+ function flush_buffers(){
+ 	ob_end_flush();
+ 	ob_flush();
+ 	flush();
+ 	ob_start();
+ }
  
  set_exception_handler('exception_handler');
  
