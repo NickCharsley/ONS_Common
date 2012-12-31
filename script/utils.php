@@ -190,8 +190,8 @@ function PEARError($obj,$msg="Pear Error",$die=true){
     function print_line($line,$ret=false){
         return printLine($line,$ret);
     }
-    function AddButton($text,$action){
-        return "<a class='Button' href='$action'?>$text</a>\n";
+    function AddButton($text,$action,$target=""){
+        return "<a class='Button' href='$action'".($target==''?'':" target='$target' ")."?>$text</a>\n";
     }
     
     function AddIconButton($icon,$text,$action){
@@ -201,9 +201,11 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         print "<table>";
         foreach($table as $row){
             print "<tr>";
+            if (is_array($row))
             foreach ($row as $cell){
                 print "<td>$cell</td>";
             }
+            else print "<td>$row</td>";
             print "</tr>";
         }
         print "</table>";
@@ -400,10 +402,10 @@ function getHTMLElement($data,$element,$class=""){
  }
 
  function flush_buffers(){
- 	ob_end_flush();
- 	ob_flush();
- 	flush();
- 	ob_start();
+ 	//ob_end_flush();
+ 	//ob_flush();
+	flush();
+ 	//ob_start();
  }
  
  set_exception_handler('exception_handler');
