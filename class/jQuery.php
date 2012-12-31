@@ -20,12 +20,22 @@ class jQuery extends HTML5 {
     static function Start()
     {
     	global $js;
+    	global $web;
+    	
+    	//krumo($web);
         if (get_class(jQuery::singleton())!=__CLASS__)
             self::$instance=new jQuery();
             
         parent::start();
-        HTML5::Script(array('type'=>"text/javascript",'src'=>"http://jquery.local/modernizr-1.5.min.js"));
-        HTML5::script(array('type'=>"text/javascript",'src'=>"http://jquery.local/jquery.js"));
+        if ($web){
+        	HTML5::Script(array('type'=>"text/javascript",'src'=>"http://www.bytenight.co.uk/jslib/jquery-1.5/modernizr-1.5.min.js"));
+        	HTML5::script(array('type'=>"text/javascript",'src'=>"http://code.jquery.com/jquery-1.8.3.js"));
+        	HTML5::script(array('type'=>"text/javascript",'src'=>"http://code.jquery.com/ui/1.9.2/jquery-ui.js"));
+        	HTML5::css("http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css");
+        }
+        else {
+        	HTML5::Script(array('type'=>"text/javascript",'src'=>"http://jquery.local/modernizr-1.5.min.js"));
+        	HTML5::script(array('type'=>"text/javascript",'src'=>"http://jquery.local/jquery.js"));        	 
         
 		//if ($js){
             //Load persistence.js and plugins
@@ -35,6 +45,7 @@ class jQuery extends HTML5 {
             HTML5::script(array('type'=>"text/javascript",'src'=>"http://persistencejs.local/persistence.store.memory.js"));
             HTML5::script(array('type'=>"text/javascript",'src'=>"http://persistencejs.local/persistence.sync.js"));
 	    //}
+        }
     }
 }
 
