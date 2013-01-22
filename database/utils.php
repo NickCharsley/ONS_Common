@@ -148,7 +148,7 @@
     			$data->$key=$value;
     
     		// Bind the DataSource container
-    		PEARError($datagrid->bind($data));
+    		PEARError($datagrid->bind($data,array("link_level"=>1)));
     		print "<h2>".get_class($data)."</h2>\n";
     		// Print the DataGrid with the default renderer (HTML Table)
     		PEARError($datagrid->render());
