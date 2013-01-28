@@ -339,6 +339,7 @@ function getHTMLElement($data,$element,$class=""){
 
  function PEAR_ErrorToPEAR_Exception($err)
  {
+ 	krumo::enable();
  	Krumo($err);
  	if ($err->getCode()) {
  		throw new PEAR_Exception($err->getMessage(),
@@ -355,7 +356,7 @@ function getHTMLElement($data,$element,$class=""){
  		print "</table>";
  		return;
  	}
- 	
+ 	krumo::enable();
  // these are our templates
     $traceline = "#%s %s(%s): %s(%s)";
     $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
