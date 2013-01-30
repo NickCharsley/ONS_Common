@@ -9,13 +9,18 @@
  *
  *
  */
+$start_time=array();
+$total_time=array();
 
-	$time = microtime();
-	$time = explode(' ', $time);
-	$time = $time[1] + $time[0];
-	if (!isset($start_time))
-		$start_time = $time;
-
+	function startTimer($type='page'){
+		global $start_time;
+		$time = microtime();
+		$time = explode(' ', $time);
+		$time = $time[1] + $time[0];
+		$start_time[$type][] = $time;
+	}
+	
+	startTimer();
 
 	ini_set('error_log',dirname(dirname(__FILE__))."/errorLogs/error.".basename($_SERVER["PHP_SELF"]).".log");
 	ini_set('max_execution_time',300);
@@ -304,16 +309,34 @@ function createUUID() {
     fclose($handle);
    }
 
-   function pageTime(){
+   function stopTimer($type){
+   		pageTime($type);
+   }
+   
+   function totalTimes(){
+   	global $total_time;
+   	foreach ($total_time as $type=>$data){
+   		$time=0;
+   		foreach($data as $interval)
+   			$time+=$interval;
+   		print_line("All $type generated in $time seconds.");
+   	}	
+   }
+   
+   function pageTime($type='page'){
    	global $start_time;
+   	global $total_time;
+   	
    	$time = microtime();
    	$time = explode(' ', $time);
    	$time = $time[1] + $time[0];
    	$finish = $time;
-   	$total_time = round(($finish - $start_time), 4);
-   	print_line('Page generated in '.$total_time.' seconds.');
+   	$i=count($start_time[$type])-1;
+   	$total_time[$type][$i] = round(($finish - $start_time[$type][$i]), 4);
+   	print_line("$type generated in {$total_time[$type][$i]} seconds.");
    }
     
+   
    
 function getHTMLElement($data,$element,$class=""){
     $data=str_replace("&nbsp;"," ",$data);
