@@ -36,7 +36,7 @@
 	 		while (false !== ($target = $d->read())) {
 	 			if (strpos($target,".ini") and substr($target,0,5)!="test_"){
 	 				$link=str_replace($name, $prefix.$name, $target);
-	 				if ($link<>$arget){
+	 				if ($link<>$target){
 		 				@unlink(buildpath($d->path,$link));
 		 				link(buildpath($d->path,$target),buildpath($d->path,$link));
 	 				}
