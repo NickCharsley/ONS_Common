@@ -12,6 +12,25 @@
 $start_time=array();
 $total_time=array();
 
+//We do this here so that all of us know what our testmode is :)
+
+if (strpos($system,'.test')>0){
+	//We should be in test mode
+	if (isset($GLOBALS['TESTMODE'])){
+		if ($GLOBALS['TESTMODE']!='test') throw new ErrorException("Using Test URL but in ".$GLOBALS['TESTMODE']." test mode");
+	}
+	$GLOBALS['TESTMODE']="test";
+}
+if (strpos($system,'.adhoc')>0){
+	//We should be in test mode
+	if (isset($GLOBALS['TESTMODE'])){
+		if ($GLOBALS['TESTMODE']!='adhoc') throw new ErrorException("Using Adhoc URL but in ".$GLOBALS['TESTMODE']." test mode");
+	}
+	$GLOBALS['TESTMODE']="adhoc";
+}
+
+	@require_once 'ezc/Base/base.php';
+
 	function startTimer($type='page'){
 		global $start_time;
 		$time = microtime();
@@ -25,7 +44,7 @@ $total_time=array();
 	ini_set('error_log',dirname(dirname(__FILE__))."/errorLogs/error.".basename($_SERVER["PHP_SELF"]).".log");
 	ini_set('max_execution_time',300);
 	
-    error_log("Enter ".__FILE__);
+    //error_log("Enter ".__FILE__);
     
     include_once "$common_path/krumo/class.krumo.php";
     
@@ -103,18 +122,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         global $db;        
         return PEARError($db->query($sql),$msg,$die);
     }
-    
-    function truncateTable($table){
-        global $db;        
         
-        if (!PEAR::isError(PEARError($db->exec("truncate table $table"),"Truncating Table $table",false)))
-            debug_error_log("Table $table Truncated");
-        else  if (!PEAR::isError(PEARError($db->exec("delete from $table"),"Deleting from $table, which may be referenced in a foreign key constraint"/*,false*/)))
-            debug_error_log("Truncated $table which may be referenced in a foreign key constraint");
-        else 
-            debug_error_log("Truncating $table failed");
-    }
-    
     function ons_autoload($class_name) {
         global $fps;
         if (@fclose(fopen($class_name . '.class.php','r',true))){
@@ -130,19 +138,26 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         }        
     }
  
+    function ons_ezc_autoload( $className )
+    {
+    	@ezcBase::autoload( $className );
+    }
+    
     function register_autoloader(){
         global $autoloader;
         if (!$autoloader){
+        	spl_autoload_register('ons_ezc_autoload');
             spl_autoload_register('ons_autoload');
-            $autoloader++;
+            $autoloader+=2;
         }
     }
     
     function unregister_autoloader(){
         global $autoloader;
         if ($autoloader){
+            spl_autoload_unregister('ons_ezc_autoload');
             spl_autoload_unregister('ons_autoload');
-            $autoloader--;
+            $autoloader-=2;
         }
     }
     
@@ -196,11 +211,11 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         return printLine($line,$ret);
     }
     function AddButton($text,$action,$target=""){
-        return "<a class='Button' href='$action'".($target==''?'':" target='$target' ")."?>$text</a>\n";
+        return "<a class='Button' href='$action'".($target==''?'':" target='$target' ")."><span>$text</span></a>\n";
     }
     
     function AddIconButton($icon,$text,$action){
-        return "<a class='Button' href='$action'?><img src='$icon' alt='$text'/></a>\n";
+        return "<a class='Button' href='$action'><img src='$icon' alt='$text'/></a>\n";
     }
     function array2Table($table){
         print "<table>";
@@ -362,8 +377,14 @@ function getHTMLElement($data,$element,$class=""){
 
  function PEAR_ErrorToPEAR_Exception($err)
  {
- 	krumo::enable();
- 	Krumo($err);
+ 	global $web;
+ 	if ($web) {
+ 		krumo::enable();
+ 		Krumo($err);
+ 	}
+ 	else {
+ 		error_log(print_r($err->getUserInfo()));
+ 	}
  	if ($err->getCode()) {
  		throw new PEAR_Exception($err->getMessage(),
  				$err->getCode());
@@ -379,7 +400,7 @@ function getHTMLElement($data,$element,$class=""){
  		print "</table>";
  		return;
  	}
- 	krumo::enable();
+ 	//krumo::enable();
  // these are our templates
     $traceline = "#%s %s(%s): %s(%s)";
     $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
@@ -433,8 +454,13 @@ function getHTMLElement($data,$element,$class=""){
  }
  
  set_exception_handler('exception_handler');
- 
- 
- debug_error_log("Exit ".__FILE__);
-?>
 
+ function dieHere(){
+ 	krumo::backtrace();
+ 	$bt=debug_backtrace(0,1);
+ 	print_line("dieHere() called at Line ".$bt[0]['line']." of ".$bt[0]['file']);
+ 	die();
+ }
+ 
+ //debug_error_log("Exit ".__FILE__);
+?>
