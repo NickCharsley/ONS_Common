@@ -165,3 +165,4 @@ pip-log.txt
 errorLogs/*
 sencha/
 *.log
+backup/*
