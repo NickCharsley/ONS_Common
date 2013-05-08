@@ -13,7 +13,61 @@
  debug_error_log("Enter ".__FILE__);
 //************************************************
  	require_once("DB/DataObject/FormBuilder/QuickForm.php"); 
- 
+ 	 	
+ 	function setupDB($root_path,$do_ini,$debug){
+ 		global $config; 		
+ 		
+ 		$config = parse_ini_file(buildpath($root_path,"database",$do_ini), true);
+		if ($debug) krumo($config);
+ 		if (isset($GLOBALS['TESTMODE'])){
+ 			$prefix="test_";
+ 			if ($GLOBALS['TESTMODE']=="adhoc")
+ 				$prefix.="adhoc_";
+ 			 				
+	 		$db_name=split("/",$config['DB_DataObject']['database']);
+	 		
+	 		$name=$db_name[count($db_name)-1];
+	 		$db_name[count($db_name)-1]=$prefix.$name;
+	 		
+	 		$config['DB_DataObject']['database']=join("/",$db_name);
+	 		//Now need to 'copy' the schema files as they have the wrong name :(
+	 		
+	 		$d = dir($config['DB_DataObject']['schema_location']);
+	 		while (false !== ($target = $d->read())) {
+	 			if (strpos($target,".ini") and substr($target,0,5)!="test_"){
+	 				$link=str_replace($name, $prefix.$name, $target);
+	 				if ($link<>$arget){
+		 				@unlink(buildpath($d->path,$link));
+		 				link(buildpath($d->path,$target),buildpath($d->path,$link));
+	 				}
+	 			}
+	 		}
+ 		}
+ 		
+ 		if ($debug) krumo($config);
+ 		if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+ 		
+ 		foreach($config as $class=>$values) {
+ 			$options = &PEAR::getStaticProperty($class,'options');
+ 			$options = $values;
+ 		}
+ 		if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+ 		
+ 		PEARError($db = MDB2::connect($config['DB_DataObject']['database']),"Early out");
+ 		//$db->setFetchMode(DB_FETCHMODE_ASSOC);
+ 		$db->setFetchMode(MDB2_FETCHMODE_ASSOC);
+ 		set_time_limit(0);
+ 		DB_DataObject::debugLevel(5);
+ 		if ($debug)	showload("t_dimension"); 		
+ 		if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+ 		
+ 		DB_DataObject::debugLevel($debug?5:0);
+ 		
+ 		if ($debug) krumo($db);
+
+ 		return $db;
+ 	}
+ 	
  	function Safe_DataObject_factory($table){
  		/*
  		 * I  have a problem on Linux as I like to Camel Case my Table Names,
@@ -98,12 +152,19 @@
 		}	     
 	}
  
+	function truncateTable($table){
+		global $db;
+		$db->exec("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
+		$db->exec("truncate table $table");
+		$db->exec("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
+	}
+	
     function resetDB(){
         global $config;
         global $root_path;
         global $db;
         
-        foreach(array_keys(parse_ini_file(buildPath($config['DB_DataObject']['schema_location'],basename($config['DB_DataObject']['database']).".ini"),tue)) as $key)
+        foreach(array_keys(parse_ini_file(buildPath($config['DB_DataObject']['schema_location'],basename($config['DB_DataObject']['database']).".ini"),true)) as $key)
         {
             if (strpos($key,"key") === false){
                 truncateTable($key);
@@ -144,9 +205,10 @@
     		$datagrid = new Structures_DataGrid();
     		$datagrid->setRequestPrefix("sl_$sl_count");
     
-    		if ($key<>"" and $value<>"")
+    		if ($key<>"" and $value<>""){
     			$data->$key=$value;
-    
+    			$data->find();
+    		}
     		// Bind the DataSource container
     		PEARError($datagrid->bind($data,array("link_level"=>1)));
     		print "<h2>".get_class($data)."</h2>\n";
