@@ -58,7 +58,7 @@ class HTML5 {
     // Prevent users to clone the instance
     public function __clone()
     {
-        trigger_error('Clone is not allowed.', E_USER_ERROR);
+        error_log('Clone is not allowed.', E_USER_ERROR);
     }
 
     static function linkTranslator($class){
