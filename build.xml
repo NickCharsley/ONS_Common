@@ -5,23 +5,24 @@
 	<property name="src"  location="."/> 
 	<property name="test" location="test"/>
 
-	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb">
+	<target name="build" depends="windows,prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+	<target name="build-linux" depends="linux,prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+
+	<target name="build-parallel" depends="windows,prepare,lint,tools-parallel,phpunit,phpcb"/>
+	<target name="build-parallel-linux" depends="linux,prepare,lint,tools-parallel,phpunit,phpcb"/>
+
+	<target name="windows">
 		<property name="phploc">phploc.bat</property>
 		<property name="pdepend">pdepend.bat</property>
+		<property name="phpmd">phpmd.bat</property>
+		<property name="phpcs">phpcs.bat</property>
 	</target>
 	
-	<target name="build-linux" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb">
+	<target name="linux">
 		<property name="phploc">phploc</property>
 		<property name="pdepend">pdepend</property>
-	</target>
-
-	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb">
-		<property name="phploc">phploc.bat</property>
-		<property name="pdepend">pdepend.bat</property>
-	</target>
-	<target name="build-parallel-linux" depends="prepare,lint,tools-parallel,phpunit,phpcb">
-		<property name="phploc">phploc</property>
-		<property name="pdepend">pdepend</property>
+		<property name="phpmd">phpmd</property>
+		<property name="phpcs">phpcs</property>
 	</target>
 
 	<target name="tools-parallel" description="Run tools in parallel">
@@ -94,7 +95,7 @@
 	</target>
 
 	<target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="phpmd.bat">
+		<exec executable="${phpmd}">
 			<arg path="${src}" />
 			<arg value="text" />
 			<!-- Removed controversial as a Too messy :) -->
@@ -105,7 +106,7 @@
 	</target>
 
 	<target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-		<exec executable="phpmd.bat">
+		<exec executable="${phpmd}">
 			<arg path="${src}" />
 			<arg value="xml" />
 			<!-- Removed ,controversial as it is a bit... :) -->
@@ -118,7 +119,7 @@
 	</target>
 
 	<target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="phpcs.bat">
+		<exec executable="${phpcs}">
 			<arg value="--standard=PEAR" />
 			<arg value="--ignore=test" />
 			<arg path="${src}" />
