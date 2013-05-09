@@ -96,13 +96,7 @@
 			<!-- Removed controversial as a Too messy :) -->
 			<arg value="codesize,design,naming,unusedcode" />
 			<arg value="--exclude" />
-			<arg value="test"/>
-			<arg value="--exclude" />
-			<arg value="googleApi" />					
-			<arg value="--exclude" />
-			<arg value="krumo" />					
-			<arg value="--exclude" />
-			<arg value="sencha" />					
+			<arg value="test,googleApi,krumo,sencha" />					
 		</exec>
 	</target>
 
@@ -113,13 +107,7 @@
 			<!-- Removed ,controversial as it is a bit... :) -->
 			<arg value="codesize,design,naming,unusedcode" />
 			<arg value="--exclude" />
-			<arg value="test"/>
-			<arg value="--exclude" />
-			<arg value="googleApi" />					
-			<arg value="--exclude" />
-			<arg value="krumo" />					
-			<arg value="--exclude" />
-			<arg value="sencha" />					
+			<arg value="test,googleApi,krumo,sencha" />					
 			<arg value="--reportfile" />
 			<arg value="${basedir}/build/logs/pmd.xml" />
 		</exec>
