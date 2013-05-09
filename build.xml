@@ -10,7 +10,7 @@
 	<property file="${basedir}/build.properties"/>
 	<property file="${os-build}"/>
 		
-	<echoproperties/>
+	<!--echoproperties/-->
 	
 	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
 	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -50,7 +50,6 @@
 		<mkdir dir="${basedir}/build/pdepend"/>
 		<mkdir dir="${basedir}/build/phpdox"/>
 		<mkdir dir="${basedir}/build/todo"/>
-
 	</target>
 
 	<target name="lint" description="Perform syntax check of sourcecode files">
@@ -70,6 +69,12 @@
 			<arg value="${basedir}/build/logs/phploc.csv" />
 			<arg value="--exclude" />
 			<arg value="test" />					
+			<arg value="--exclude" />
+			<arg value="googleApi" />					
+			<arg value="--exclude" />
+			<arg value="krumo" />					
+			<arg value="--exclude" />
+			<arg value="sencha" />					
 			<arg path="${src}" />
 		</exec>
 	</target>
@@ -79,7 +84,7 @@
 			<arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
 			<arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
 			<arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-			<arg value="--ignore=test" />
+			<arg value="--ignore=test,googleApi,krumo,sencha" />
 			<arg path="${src}" />
 		</exec>
 	</target>
@@ -92,6 +97,12 @@
 			<arg value="codesize,design,naming,unusedcode" />
 			<arg value="--exclude" />
 			<arg value="test"/>
+			<arg value="--exclude" />
+			<arg value="googleApi" />					
+			<arg value="--exclude" />
+			<arg value="krumo" />					
+			<arg value="--exclude" />
+			<arg value="sencha" />					
 		</exec>
 	</target>
 
@@ -103,6 +114,12 @@
 			<arg value="codesize,design,naming,unusedcode" />
 			<arg value="--exclude" />
 			<arg value="test"/>
+			<arg value="--exclude" />
+			<arg value="googleApi" />					
+			<arg value="--exclude" />
+			<arg value="krumo" />					
+			<arg value="--exclude" />
+			<arg value="sencha" />					
 			<arg value="--reportfile" />
 			<arg value="${basedir}/build/logs/pmd.xml" />
 		</exec>
@@ -111,7 +128,7 @@
 	<target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
 		<exec executable="${phpcs}">
 			<arg value="--standard=PEAR" />
-			<arg value="--ignore=test" />
+			<arg value="--ignore=test,googleApi,krumo,sencha" />
 			<arg path="${src}" />
 		</exec>
 	</target>
@@ -121,7 +138,7 @@
 			<arg value="--report=checkstyle" />
 			<arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
 			<arg value="--standard=PEAR" />
-			<arg value="--ignore=test" />
+			<arg value="--ignore=test,googleApi,krumo,sencha" />
 			<arg path="${src}" />
 		</exec>
 	</target>
@@ -134,6 +151,12 @@
 			<arg value="build"/>
 			<arg value="--exclude"/>
 			<arg value="test"/>
+			<arg value="--exclude" />
+			<arg value="googleApi" />					
+			<arg value="--exclude" />
+			<arg value="krumo" />					
+			<arg value="--exclude" />
+			<arg value="sencha" />					
 			<arg path="${src}" />
 		</exec>
 	</target>
@@ -143,7 +166,7 @@
 	</target>
 
 	<target name="phpunit" description="Run unit tests with PHPUnit">
-		<exec executable="phpunit.bat" dir="test" failonerror="true"/>
+		<exec executable="${phpunit}" dir="test" failonerror="true"/>
 	</target>
 
 	<target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
