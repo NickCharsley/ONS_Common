@@ -152,7 +152,7 @@
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'PEAR_ErrorToPEAR_Exception');
 /***********************************************************\
  * Database Connectivity
-\***********************************************************/
+\*********************************************************** /
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
     if (file_exists(buildpath($root_path,"database",$do_ini))){    	
     	if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
@@ -163,12 +163,12 @@
 
     }
 	else {
-		print("Missing ".buildpath($root_path,"database",$do_ini)."?");
+		print_line("Missing ".buildpath($root_path,"database",$do_ini)."?");
 		dieHere();
 	}
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
         
-  //** Eclipse Debug Code **************************
+  /** Eclipse Debug Code **************************/
 if (str_replace("/","\\",__FILE__)==str_replace("/","\\",$_SERVER["SCRIPT_FILENAME"])){
     if (class_exists('gtk',false)) {
         print($_SERVER["SCRIPT_FILENAME"]."\n\r");
