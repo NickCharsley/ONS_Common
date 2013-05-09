@@ -6,18 +6,22 @@
 	<property name="test" location="test"/>
 
 	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb">
-		<property name="ext">.bat</property>
+		<property name="phploc">phploc.bat</property>
+		<property name="pdepend">pdepend.bat</property>
 	</target>
 	
 	<target name="build-linux" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb">
-		<property name="ext"></property>
+		<property name="phploc">phploc</property>
+		<property name="pdepend">pdepend</property>
 	</target>
 
 	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb">
-		<property name="ext">.bat</property>
+		<property name="phploc">phploc.bat</property>
+		<property name="pdepend">pdepend.bat</property>
 	</target>
 	<target name="build-parallel-linux" depends="prepare,lint,tools-parallel,phpunit,phpcb">
-		<property name="ext"></property>
+		<property name="phploc">phploc</property>
+		<property name="pdepend">pdepend</property>
 	</target>
 
 	<target name="tools-parallel" description="Run tools in parallel">
@@ -70,7 +74,7 @@
 	</target>
 
 	<target name="phploc" description="Measure project size using PHPLOC">
-		<exec executable="phploc${ext}">
+		<exec executable="${phploc}">
 			<arg value="--log-csv" />
 			<arg value="${basedir}/build/logs/phploc.csv" />
 			<arg value="--exclude" />
@@ -80,7 +84,7 @@
 	</target>
 
 	<target name="pdepend" description="Calculate software metrics using PHP_Depend">
-		<exec executable="pdepend${ext}">
+		<exec executable="${pdepend}">
 			<arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
 			<arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
 			<arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
@@ -90,7 +94,7 @@
 	</target>
 
 	<target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="phpmd${ext}">
+		<exec executable="phpmd.bat">
 			<arg path="${src}" />
 			<arg value="text" />
 			<!-- Removed controversial as a Too messy :) -->
@@ -101,7 +105,7 @@
 	</target>
 
 	<target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-		<exec executable="phpmd${ext}">
+		<exec executable="phpmd.bat">
 			<arg path="${src}" />
 			<arg value="xml" />
 			<!-- Removed ,controversial as it is a bit... :) -->
@@ -114,7 +118,7 @@
 	</target>
 
 	<target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="phpcs${ext}">
+		<exec executable="phpcs.bat">
 			<arg value="--standard=PEAR" />
 			<arg value="--ignore=test" />
 			<arg path="${src}" />
@@ -122,7 +126,7 @@
 	</target>
 
 	<target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-		<exec executable="phpcs${ext}" output="nul">
+		<exec executable="phpcs.bat" output="nul">
 			<arg value="--report=checkstyle" />
 			<arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
 			<arg value="--standard=PEAR" />
@@ -132,7 +136,7 @@
 	</target>
 
 	<target name="phpcpd" description="Find duplicate code using PHPCPD">
-		<exec executable="phpcpd${ext}">
+		<exec executable="phpcpd.bat">
 			<arg value="--log-pmd" />
 			<arg value="${basedir}/build/logs/pmd-cpd.xml" />
 			<arg value="--exclude"/>
@@ -144,15 +148,15 @@
 	</target>
 
 	<target name="phpdox" description="Generate API documentation using phpDox">
-		<exec executable="phpdox${ext}"/>
+		<exec executable="phpdox.bat"/>
 	</target>
 
 	<target name="phpunit" description="Run unit tests with PHPUnit">
-		<exec executable="phpunit${ext}" dir="test" failonerror="true"/>
+		<exec executable="phpunit.bat" dir="test" failonerror="true"/>
 	</target>
 
 	<target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-		<exec executable="phpcb${ext}">
+		<exec executable="phpcb.bat">
 			<arg value="--log" />
 			<arg path="${basedir}/build/logs" />
 			<arg value="--source" />
