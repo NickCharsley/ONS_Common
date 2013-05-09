@@ -166,3 +166,4 @@ errorLogs/*
 sencha/
 *.log
 backup/*
+build-local.properties

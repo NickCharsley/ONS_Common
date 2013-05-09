@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="ons_Common" default="build">
-	
+		
 	<property name="src"  location="."/> 
 	<property name="test" location="test"/>
+	<property name="os-build" location="${basedir}/build-${os.name}.properties"/>
 
-	<target name="build" depends="windows,prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
-	<target name="build-linux" depends="linux,prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
-
-	<target name="build-parallel" depends="windows,prepare,lint,tools-parallel,phpunit,phpcb"/>
-	<target name="build-parallel-linux" depends="linux,prepare,lint,tools-parallel,phpunit,phpcb"/>
-
-	<target name="windows">
-		<property name="phploc">phploc.bat</property>
-		<property name="pdepend">pdepend.bat</property>
-		<property name="phpmd">phpmd.bat</property>
-		<property name="phpcs">phpcs.bat</property>
-	</target>
+	<property file="${basedir}/build-local.properties"/>
+	<property file="${basedir}/build.properties"/>
+	<property file="${os-build}"/>
+		
+	<echoproperties/>
 	
-	<target name="linux">
-		<property name="phploc">phploc</property>
-		<property name="pdepend">pdepend</property>
-		<property name="phpmd">phpmd</property>
-		<property name="phpcs">phpcs</property>
-	</target>
+	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
 
 	<target name="tools-parallel" description="Run tools in parallel">
 		<parallel threadCount="2">
@@ -127,7 +117,7 @@
 	</target>
 
 	<target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-		<exec executable="phpcs.bat" output="nul">
+		<exec executable="${phpcs}" output="nul">
 			<arg value="--report=checkstyle" />
 			<arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
 			<arg value="--standard=PEAR" />
@@ -137,7 +127,7 @@
 	</target>
 
 	<target name="phpcpd" description="Find duplicate code using PHPCPD">
-		<exec executable="phpcpd.bat">
+		<exec executable="${phpcpd}">
 			<arg value="--log-pmd" />
 			<arg value="${basedir}/build/logs/pmd-cpd.xml" />
 			<arg value="--exclude"/>
