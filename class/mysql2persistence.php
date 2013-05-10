@@ -16,20 +16,20 @@
 
 
 if (class_exists('gtk',false)) {
-	//TODO:any gtk specific code for mysql2persistence.php goes here
+    //TODO:any gtk specific code for mysql2persistence.php goes here
 } else {
-	//TODO:any web specific code for mysql2persistence.php goes here
+    //TODO:any web specific code for mysql2persistence.php goes here
 }
 
 
 
 //** Eclipse Debug Code **************************
 if (strtolower(str_replace("/","\\",__FILE__))==strtolower(str_replace("/","\\",$_SERVER["SCRIPT_FILENAME"]))){
-	if (class_exists('gtk',false)) {
-		//TODO:any gtk specific code for mysql2persistence.php goes here
-	} else {
-		//TODO:any web specific code for mysql2persistence.php goes here
-	}
+    if (class_exists('gtk',false)) {
+        //TODO:any gtk specific code for mysql2persistence.php goes here
+    } else {
+        //TODO:any web specific code for mysql2persistence.php goes here
+    }
 
 }
 //************************************************

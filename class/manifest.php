@@ -23,30 +23,30 @@ class manifest {
     private $files=array();
     private $on=true;
     private $hash="";
-    
+
     function getManifest(){
         return $this->files;
     }
-    
+
     function on(){
-    	debug_error_log("Manifest On");
-    	$this->on=true;
+        debug_error_log("Manifest On");
+        $this->on=true;
     }
-    
+
     function off(){
-    	debug_error_log("Manifest Off");
-    	$this->on=false;
+        debug_error_log("Manifest Off");
+        $this->on=false;
     }
-    
+
     function getHash($add=""){
         return md5($this->hash.$add);
     }
-    
-    function file($file,$segment="CACHE MANIFEST",$hash=true){  
+
+    function file($file,$segment="CACHE MANIFEST",$hash=true){
         if ($segment===false){
             $hash=false;
             $segment="CACHE MANIFEST";
-        }   
+        }
         if (!$this->on) $segment="NETWORK:";
         $this->files[$segment][$file]=$file;
         if ($hash){
@@ -55,22 +55,22 @@ class manifest {
         }
         return $file;
     }
-    
+
     function directory($directory,$segment="CACHE MANIFEST",$add=true){
         if ($segment===false){
             $add=false;
-            $segment="CACHE MANIFEST";          
-        }   
-        if (!$this->on) $segment="NETWORK:";        
+            $segment="CACHE MANIFEST";
+        }
+        if (!$this->on) $segment="NETWORK:";
         $this->map_directory($directory,$directory,$segment,$add);
     }
-    
+
     function map_directory($directory,$map,$segment="CACHE MANIFEST",$add=true){
         if ($segment===false){
             $hash=false;
             $segment="CACHE MANIFEST";
-        }   
-        if (!$this->on) $segment="NETWORK:";        
+        }
+        if (!$this->on) $segment="NETWORK:";
         $dir=new RecursiveDirectoryIterator($directory);
         foreach(new RecursiveIteratorIterator($dir) as $file){
             if ($file->Isfile() and substr($file->getFilename(),0,1)!='.' and strpos($file->getFilename(),"log")==false) {
@@ -80,9 +80,9 @@ class manifest {
             }
         }
     }
-    
+
     function network($file){
-    	$segment="NETWORK:";
+        $segment="NETWORK:";
         $this->files[$segment][$file]=$file;
     }
 }
