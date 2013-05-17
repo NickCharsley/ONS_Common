@@ -40,12 +40,7 @@ if (strpos($system,'.adhoc')>0){
 	}
 	
 	startTimer();
-
-	ini_set('error_log',dirname(dirname(__FILE__))."/errorLogs/error.".basename($_SERVER["PHP_SELF"]).".log");
-	ini_set('max_execution_time',300);
-	
-    //error_log("Enter ".__FILE__);
-    
+	    
     include_once "$common_path/krumo/class.krumo.php";
     
     function ons_InDrupal(){
@@ -462,5 +457,5 @@ function getHTMLElement($data,$element,$class=""){
  	die();
  }
  
- //debug_error_log("Exit ".__FILE__);
+ 
 ?>

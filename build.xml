@@ -2,13 +2,14 @@
 
 <project name="ons_Common" default="build">
 		
-	<property name="src"  location="."/> 
-	<property name="test" location="test"/>
 	<property name="os-build" location="${basedir}/build-${os.name}.properties"/>
+		
+		<property file="${basedir}/build-local.properties"/>
+		<property file="${basedir}/build-all.properties"/>
+		<property file="${os-build}"/>
 
-	<property file="${basedir}/build-local.properties"/>
-	<property file="${basedir}/build.properties"/>
-	<property file="${os-build}"/>
+		<property name="src"  location="${workspace}"/> 
+		<property name="test" location="${workspace}/test"/>
 		
 	<!--echoproperties/-->
 	

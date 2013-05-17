@@ -1,4 +1,5 @@
 <?php
+error_log("Enter ".__FILE__);
 
 abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 {
@@ -12,14 +13,12 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
     //ONS Helpers, only expect one to be set
     public $tables=array();
     abstract public function FileName();
-
+	
     /**
      * Performs operation returned by getSetUpOperation().
      */
     protected function setUp()
     {
-        error_log("Run Setup:".__FILE__);
-
         $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
         parent::setUp();
         $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
@@ -48,6 +47,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
             }
 
             if ($this->conn === null) {
+
                 if (self::$pdo == null) {
                     self::$pdo = new PDO( $GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'] );
                     self::$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -81,7 +81,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
                 $tableset=isset($row['Create Table']);
 
                 $sql="use {$GLOBALS['DB_DBNAME']};\nDrop ".($tableset?"Table ":"View ")." $table;\n";
-                error_log("Sync DB ($table) $sql");
+                //error_log("Sync DB ($table) $sql");
                 @$this->getConnection()->getConnection()->query($sql);
 
                 $sql="use {$GLOBALS['DB_DBNAME']};\n".$row['Create '.($tableset?"Table":"View")];
@@ -89,7 +89,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
                     $sql="CREATE ".substr($sql,strpos($sql,"VIEW"));
                     $sql=str_replace("{$GLOBALS['DB_SYNCNAME']}", "{$GLOBALS['DB_DBNAME']}", $sql);
                 }
-                error_log("Sync DB ($table) $sql");
+                //error_log("Sync DB ($table) $sql");
                 @$this->getConnection()->getConnection()->query($sql);
             }
         } catch(PDOException $e) {
@@ -114,6 +114,11 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
         return buildPath($test_path,"testData","$file.xml");
     }
 
-}
+	function __construct($name = NULL, array $data = array(), $dataName = ''){
+		error_log("Initialised ".get_class($this));
+		parent::__construct($name, $data, $dataName);
+	}	
 
+}
+error_log("Exit ".__FILE__);
 ?>

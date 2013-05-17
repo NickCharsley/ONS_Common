@@ -141,7 +141,8 @@ class HTML5 {
         if (is_array($name)){
             HTML5::singleton()->header[]=HTML5::tag('meta',$name);
         }
-        else HTML5::singleton()->header[]="<meta name='$name' content='$meta' />";
+        else 
+        HTML5::singleton()->header[]="<meta name='$name' content='$meta' />";
     }
 
     static function href($address){
@@ -235,12 +236,12 @@ class HTML5 {
         }
         else {
             print "<a ";
-                foreach ($href as $attrib=>$value){
-                    if (strtolower($attrib)<>"text")
-                    {
-                        print strtoupper($attrib)."='$value' ";
-                    }
+            foreach ($href as $attrib=>$value){
+                if (strtolower($attrib)<>"text")
+                {
+                    print strtoupper($attrib)."='$value' ";
                 }
+            }
             print ">".$href['text']."</a>";
         }
     }

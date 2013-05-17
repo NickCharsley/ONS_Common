@@ -18,6 +18,13 @@
  		global $config; 		
  		
  		$config = parse_ini_file(buildpath($root_path,"database",$do_ini), true);
+		//We may override this from Globals
+		foreach(array_keys($config['DB_DataObject']) as $key){
+			if (isset($GLOBALS['DB_DataObject_config_'.$key])){
+				$config['DB_DataObject']=$GLOBALS['DB_DataObject_config_'.$key];
+			}
+		}
+		
 		if ($debug) krumo($config);
  		if (isset($GLOBALS['TESTMODE'])){
  			$prefix="test_";

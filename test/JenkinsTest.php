@@ -10,22 +10,22 @@
  */
 if (!defined("__COMMON__"))
  	include_once 'ons_common.php';
-error_log("Enter", E_USER_NOTICE);
+error_log("Enter ".__FILE__);
 //************************************************
 
-class JenkinsTest extends PHPUnit_Framework_TestCase 
+class JenkinsTest extends PHPUnit_Framework_TestCase
 {
-	
+
 	/*
-	 * 
+	 *
 	 */
 	function testJenkinsActive(){
-		$this->assertEquals(true,true);		
+		$this->assertEquals(true,true);
 	}
-	
+
 }
 
 //************************************************
-error_log("Exit", E_USER_NOTICE);
+error_log("Exit ".__FILE__);
 ?>
 
