@@ -13,7 +13,7 @@ if (!defined("__COMMON__"))
 error_log("Enter ".__FILE__);
 //************************************************
 
-class JenkinsTest extends PHPUnit_Framework_TestCase
+class Jenkins extends PHPUnit_Framework_TestCase
 {
 
 	/*

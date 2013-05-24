@@ -6,8 +6,10 @@
 * Date:    2008-08-03                                                          *
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
-
-define('FPDF_FONTPATH',((!$web)?'C:\Users\nick\workspace\common\font\\':''));
+if (!defined("__COMMON__"))
+ 	include_once('ons_common.php');
+ 
+define('FPDF_FONTPATH',$GLOBALS['common_path']."\\font\\");
 
 define('FPDF_VERSION','1.6');
 

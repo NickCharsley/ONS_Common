@@ -1,0 +1,4 @@
+<Files *.properties>
+ order allow,deny
+ deny from all
+</Files>
