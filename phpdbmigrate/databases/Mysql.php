@@ -76,7 +76,7 @@ class Mysql extends Base_db {
         return "ALTER TABLE " . $table . " CHANGE COLUMN " . $column_name . " " . $new_name . " " . $this->_build_column_type($attributes) . " " . $this->_build_remainder($attributes) . ";";
     }
 
-    private function _get_connection($config) {
+    protected function _get_connection($config) {
         if(function_exists("mysqli_connect")) {
             $this->connection =& new Mysqli($config['host'], $config['user'], $config['password'], $config['database']) or die('Could not connect: ' . mysqli_error());
         } else {
@@ -84,14 +84,14 @@ class Mysql extends Base_db {
         }
     }
 
-    private function _create_schema() {
+    protected function _create_schema() {
         $this->execute_safe_query("DROP TABLE IF EXISTS migration_info;");
         $this->execute_safe_query("CREATE TABLE migration_info(version varchar(255) NOT NULL default '0');");
         $this->execute_safe_query("INSERT INTO migration_info (version) VALUES (0);");
         return 0;
     }
 
-    private function _engine($attributes) {
+    protected function _engine($attributes) {
         $string = "";
         if (in_array('engine', array_keys($attributes))) {
             $string = "ENGINE=" . $attributes['engine'] . " ";
@@ -100,7 +100,7 @@ class Mysql extends Base_db {
         return $string;
     }
 
-    private function _using($attributes) {
+    protected function _using($attributes) {
         $string = "";
         if (in_array('using', array_keys($attributes))) {
             $string = "USING " . strtoupper($attributes['using']);
@@ -109,7 +109,7 @@ class Mysql extends Base_db {
         return $string;
     }
 
-    private function _char_set($attributes) {
+    protected function _char_set($attributes) {
         if (in_array('char_set', array_keys($attributes))) {
             return 'DEFAULT CHARACTER SET = ' .  $attributes['char_set'];
         } else {
@@ -117,7 +117,7 @@ class Mysql extends Base_db {
         }
     }
 
-    private function _build_remainder($attributes) {
+    protected function _build_remainder($attributes) {
         $string = "";
 
         if (array_key_exists('not_null', $attributes) && strtolower($attributes['not_null']) == 'true') {

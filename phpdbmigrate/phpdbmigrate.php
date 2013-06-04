@@ -41,7 +41,7 @@ class PHPDbMigrate {
         $this->_exit("Migration Finished");
     }
 
-    private function _run_files($files_list, $control, $environment) {
+    protected function _run_files($files_list, $control, $environment) {
         for ($i = 0; $i < sizeof($files_list); $i++) {
 
             try {
@@ -53,13 +53,14 @@ class PHPDbMigrate {
                     $this->_execute_file("down", "up", $i, $files_list, $control['stop'], $environment);
                 }
             } catch(Exception $e) {
+                error_log($e->getMessage());
                 $this->_exit("There an error in file: {$files_list[$i]['file']}. Ending migration");                
                 throw new Exception("Ending");
             }
         }
     }
 
-    private function _run_version_up($control, $i, $files_list) {
+    protected function _run_version_up($control, $i, $files_list) {
         if ($control['walk'] == "up" && $control['start'] < (int)$files_list[$i]['number'] && $control['stop'] >= (int)$files_list[$i]['number']) {
             return TRUE;
         }
@@ -67,7 +68,7 @@ class PHPDbMigrate {
         return FALSE;
     }
 
-    private function _run_version_down($control, $i, $files_list) {
+    protected function _run_version_down($control, $i, $files_list) {
         if ($control['walk'] == "down" && $control['start'] >= (int)$files_list[$i]['number'] && $control['stop'] < (int)$files_list[$i]['number']) {
             return TRUE;
         }
@@ -75,12 +76,13 @@ class PHPDbMigrate {
         return FALSE;
     }
 
-    private function _execute_file($up, $down, $i, $files_list, $version, $environment) {
+    protected function _execute_file($up, $down, $i, $files_list, $version, $environment) {
         $this->_print_file_info($files_list[$i]['file']);
         $commands = $this->_parse_file("[{$up}]", "[{$down}]", $files_list[$i]['file'], $environment);
         $executables = array();
 
         foreach($commands as $command) {
+            //print($command['data']."\n");
             $this->_load_executables($command, $executables);
         }
 
@@ -114,7 +116,7 @@ class PHPDbMigrate {
         }
     }
 
-    private function _load_executables($command, &$executables) {
+    protected function _load_executables($command, &$executables) {
         $tmp = "";
         if (strpos($command['command'], "_") !== False) {
             $tmp = explode("_", $command['command']);
@@ -127,7 +129,7 @@ class PHPDbMigrate {
         $executables[] = new $tmp($this->db, $command['data']);
     }
 
-    private function _parse_file($start, $end, $file, $environment) {
+    protected function _parse_file($start, $end, $file, $environment) {
         $record = FALSE;
         $queries = array();
 
@@ -153,7 +155,7 @@ class PHPDbMigrate {
         return $queries;
     }
 
-    private function _build_queries_list(&$queries, $line) {
+    protected function _build_queries_list(&$queries, $line) {
         $temp_line = trim($line);
         $code_line = $line;
         $command_data = $this->_parse_command($temp_line);
@@ -171,7 +173,7 @@ class PHPDbMigrate {
         }
     }
 
-    private function _parse_command($line) {
+    protected function _parse_command($line) {
         $start = strpos($line, ":");
         if ($start === false) {
             return array($line, "");
@@ -180,7 +182,7 @@ class PHPDbMigrate {
         return array(trim(substr($line,0,$start)), trim(substr($line,$start + 1)));
     }
 
-    private function _start_file_commands_recording($start, $line) {
+    protected function _start_file_commands_recording($start, $line) {
         $found = FALSE;
         if (trim(strtolower($line)) == $start) {
             $found = TRUE;
@@ -188,7 +190,7 @@ class PHPDbMigrate {
         return $found;
     }
 
-    private function _stop_file_commands_recording($end, $line) {
+    protected function _stop_file_commands_recording($end, $line) {
         $found = FALSE;
         if (trim(strtolower($line)) == $end) {
             $found = TRUE;
@@ -196,11 +198,11 @@ class PHPDbMigrate {
         return $found;
     }
 
-    private function _print_file_info($file) {
+    protected function _print_file_info($file) {
         error_log("Loading file {$file}:");        
     }
 
-    private function _exit($msg="") {
+    protected function _exit($msg="") {
         $msg="Exit Called".($msg==""?"":": $msg");
         if(!is_null($this->db)) {
             $this->db->close();
@@ -210,7 +212,7 @@ class PHPDbMigrate {
         //exit();
     }
 
-    private function _determine_stop_version($version, $opt_version, &$files_list) {
+    protected function _determine_stop_version($version, $opt_version, &$files_list) {
         $control = array("start" => $version, "stop" => "", "walk" => "up");
         if (is_null($opt_version)) {
             $control['stop'] = (int)$files_list[sizeof($files_list) - 1]['number'];
@@ -236,7 +238,7 @@ class PHPDbMigrate {
         return $control;
     }
 
-    private function _build_files_list($path) {
+    protected function _build_files_list($path) {
         $files = array();
         if (is_dir($path)){
             $dir = opendir($path);
@@ -264,7 +266,7 @@ class PHPDbMigrate {
         return $files;
     }
 
-    private function _assemble_files_array($files) {
+    protected function _assemble_files_array($files) {
         $file_array = array();
         foreach($files as $file) {
             $file_array[] = array('number' => $this->_get_file_number($file), 'file' => $file);
@@ -273,7 +275,7 @@ class PHPDbMigrate {
         return $file_array;
     }
 
-    private function _check_duplicates($files) {
+    protected function _check_duplicates($files) {
         $file_numbers = array();
         foreach($files as $file) {
             $file_numbers[] = (int)$this->_get_file_number($file);
@@ -289,7 +291,7 @@ class PHPDbMigrate {
         return TRUE;
     }
 
-    private function _get_file_number($file) {
+    protected function _get_file_number($file) {
         $end = strpos($file, "_");
         return substr($file, 0, $end);
     }

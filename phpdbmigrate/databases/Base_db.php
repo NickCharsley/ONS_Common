@@ -52,7 +52,7 @@ class Base_db {
         $this->execute_safe_query($query);
     }
 
-    private function _strip_comma($desc) {
+    protected function _strip_comma($desc) {
         if (endswith(trim($desc), ",")) {
             $comma = strrpos($desc, ",");
             $desc = trim(substr($desc, 0, $comma));
@@ -64,7 +64,7 @@ class Base_db {
         return $desc;
     }
 
-    private function _build_table($query) {
+    protected function _build_table($query) {
         $desc = "";
         $columns_string = "";
         $table_description = array();
@@ -90,7 +90,7 @@ class Base_db {
         return array($table_description, $columns_description, $keys[0]);
     }
 
-    private function _build_columns_list($desc) {
+    protected function _build_columns_list($desc) {
         $columns = array();
         $keys = explode("column:", $desc);
         foreach ($keys as $key) {
@@ -101,7 +101,7 @@ class Base_db {
         return $columns;
     }
 
-    private function _build_primary_key($desc) {
+    protected function _build_primary_key($desc) {
         $pk_pos = strpos($desc, "primary_key:");
         $col_pos = strpos($desc, "column:");
 
@@ -134,7 +134,7 @@ class Base_db {
         return array($primary_string, $column_string);
     }
 
-    private function _columns($columns) {
+    protected function _columns($columns) {
         $string = "";
         $count = 0;
         foreach($columns as $element) {
@@ -152,14 +152,14 @@ class Base_db {
         return trim($string);
     }
 
-    private function _format_attributes($desc) {
+    protected function _format_attributes($desc) {
         $attribute_dict = $this->_build_dictionary($desc);
         $column_type = $this->_build_column_type($attribute_dict);
         $remainder_string = $this->_build_remainder($attribute_dict);
         return "{$column_type} {$remainder_string}";
     }
 
-    private function _build_table_description($desc) {
+    protected function _build_table_description($desc) {
         $desc = $this->_strip_comma($desc);
         $attributes = array();
         $elements = explode(",", $desc);
@@ -172,7 +172,7 @@ class Base_db {
         return $attributes;
     }
 
-    private function _primary_key($primary_key) {
+    protected function _primary_key($primary_key) {
         if ($primary_key != "") {
             return ", PRIMARY KEY ({$primary_key})";
         } else {
@@ -180,7 +180,7 @@ class Base_db {
         }
     }
 
-    private function _comment($attributes) {
+    protected function _comment($attributes) {
         if (array_key_exists('comment', $attributes)) {
             return "COMMENT = '{$attributes['comment']}'";
         } else {
@@ -188,14 +188,14 @@ class Base_db {
         }
     }
 
-    private function _column_name($desc) {
+    protected function _column_name($desc) {
         $comma = strpos($desc, ",");
         $name = substr($desc, 0, $comma);
         $name = str_replace("column:", "", $name);
         return array($this->_strip_comma(trim($name)), $this->_strip_comma(substr($desc, $comma)));
     }
 
-    private function _build_dictionary($query) {
+    protected function _build_dictionary($query) {
         $attributes = array();
         $elements = explode(",", $query);
         foreach($elements as $element) {
@@ -206,7 +206,7 @@ class Base_db {
         return $attributes;
     }
 
-    private function _build_column_type($attributes) {
+    protected function _build_column_type($attributes) {
         $type = strtoupper($attributes['type']);
 
         if (array_key_exists('length', $attributes)) {
@@ -221,26 +221,26 @@ class Base_db {
         return $type;
     }
 
-    private function _unique($attributes) {
+    protected function _unique($attributes) {
         if (array_key_exists('unique', $attributes) && strtolower($attributes['unique']) == "true") {
             return "UNIQUE";
         }
         return "";
     }
 
-    private function _engine($attributes) {
+    protected function _engine($attributes) {
         return "";
     }
 
-    private function _char_set($attributes) {
+    protected function _char_set($attributes) {
         return "";
     }
 
-    private function _using($attributes) {
+    protected function _using($attributes) {
         return "";
     }
 
-    private function _index_build_dictionary($query) {
+    protected function _index_build_dictionary($query) {
         $attributes = array();
 
         foreach ( $query as $k => $v) {
@@ -254,7 +254,7 @@ class Base_db {
         return $attributes;
     }
 
-    private function _index_column_build($columns) {
+    protected function _index_column_build($columns) {
         $listing = array();
         $new_columns = explode(",", $columns);
         for ($i = 0; $i < sizeof($new_columns); $i++) {
@@ -276,7 +276,7 @@ class Base_db {
         return $listing;
     }
 
-    private function _index_build_remainder($attributes) {
+    protected function _index_build_remainder($attributes) {
         $string = "";
         $count = 0;
         foreach($attributes['columns'] as $column) {

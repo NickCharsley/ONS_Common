@@ -378,7 +378,7 @@ function getHTMLElement($data,$element,$class=""){
  		Krumo($err);
  	}
  	else {
- 		error_log(print_r($err->getUserInfo()));
+ 		error_log($err->getUserInfo());
  	}
  	if ($err->getCode()) {
  		throw new PEAR_Exception($err->getMessage(),

@@ -90,6 +90,17 @@
         $dbc=$config['DB_DataObject'];
         list($dbc['driver'],$dbc['user'],$dbc['password'],$dbc['host'],$dbc['database'])=preg_split('`://|[:@/]`',$dbc['database']);
         ksort($dbc);
+        //If $GLOBALS is set we should validate and die if different database;
+        if (isset($GLOBALS["DB_DSN"])){
+                if ($GLOBALS["DB_DSN"]!=$dbc['driver'].":host=".$dbc['host'].";dbname=".$dbc['database'])
+                    throw new Exception("DSN Mismatch! Globals={$GLOBALS["DB_DSN"]}, DataObject=".$dbc['driver'].":host=".$dbc['host'].";dbname=".$dbc['database']);                        
+        }
+	if (isset($GLOBALS["DB_DBNAME"])){
+            if ($GLOBALS["DB_DBNAME"]!=$dbc['database'])
+                throw new Exception("Database Name Mismatch! Globals={$GLOBALS["DB_DBNAME"]}, DataObject={$dbc['database']}");                        
+        }
+        
+        
         return $dbc;
     }
     
@@ -139,12 +150,13 @@
                     }
                     $sql.=$asql[$i];
             }	
-            else $sql=$template;
-            print_line($sql);
+            else $sql=trim($template);
+            if ($sql=="") return;
+            error_log($sql);
             PEARError($db->query($sql));
     }
 
-    function executeMultiple($sql,$values){
+    function executeMultiple($sql,$values=array(array())){
             foreach ($values as $args){
                     foreach ($sql as $qry){
                             execute($qry,$args);
@@ -152,6 +164,10 @@
             }
     }
 
+    function executeScript($sql){
+        executeMultiple(split(";",$sql));
+    }
+    
     function getTableList(){
             global $config;
     } 
@@ -200,8 +216,13 @@
 
     function truncateTable($table){
             global $db;
+            
             $db->exec("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
-            $db->exec("truncate table $table");
+            try {
+                $db->exec("truncate table $table");
+            } catch (Exception $e){
+                error_log($e->getMessage());
+            }
             $db->exec("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
     }
 

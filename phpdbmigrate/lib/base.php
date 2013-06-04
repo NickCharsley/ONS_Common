@@ -1,17 +1,17 @@
 <?php
 class Base {
-    var $db = NULL;
-    var $table = "";
-    var $column_name = "";
-    var $new_name = "";
-    var $query = "";
-    var $attributes = array();
+    protected $db = NULL;
+    protected $table = "";
+    protected $column_name = "";
+    protected $new_name = "";
+    protected $query = "";
+    protected $attributes = array();
 
     function Base() {
 
     }
 
-    private function _clear_attributes() {
+    protected function _clear_attributes() {
         $this->db = Null;
         $this->table = "";
         $this->column_name = "";
@@ -20,7 +20,7 @@ class Base {
         $this->attributes = array();
     }
 
-    private function _trim_table($query) {
+    protected function _trim_table($query) {
         $end = strpos($query, ",");
 
         if ($end === false) {
@@ -32,7 +32,7 @@ class Base {
         return trim(substr($query,$end + 1));
     }
 
-    private function _trim_column_name($query) {
+    protected function _trim_column_name($query) {
         $end = strpos($query, ",");
         if ($end === false) {
             $this->column_name = trim($query);
@@ -42,7 +42,7 @@ class Base {
         return trim(substr($query,$end + 1));
     }
 
-    private function _trim_new_name($query) {
+    protected function _trim_new_name($query) {
         $end = strpos($query, ",");
          if ($end === false) {
             $this->new_name = trim($query);
@@ -53,7 +53,7 @@ class Base {
         return trim(substr($query,$end + 1));
     }
 
-    private function _build_dictionary($query) {
+    protected function _build_dictionary($query) {
         $elements = explode(",",$query);
 
         foreach($elements as $element) {

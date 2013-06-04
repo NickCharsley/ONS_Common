@@ -11,7 +11,7 @@
 		<property name="src"  location="${workspace}"/> 
 		<property name="test" location="${workspace}/test"/>
 		
-	<!--echoproperties/-->
+	<echoproperties/>
 	
 	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
 	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>

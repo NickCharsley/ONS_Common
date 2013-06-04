@@ -27,7 +27,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
     final public function getConnection()
     {
         global $db;
-        try {
+        try {            
             @DB_DataObject::debugLevel($GLOBALS['DB_DEBUG']);
             //
             if (!strpos($GLOBALS['DB_DSN'],'test_')) {
@@ -54,13 +54,14 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
                 }
 
                 $this->conn= $this->createDefaultDBConnection(self::$pdo, $GLOBALS['DB_DBNAME']);
-
+/*
                 $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
                 foreach ($this->tables as $table){
                     $this->sync($table);
                 }
                 $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
-            }
+  */
+                }
             return $this->conn;
 
         } catch(PDOException $e) {
@@ -68,8 +69,8 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
             dieHere();
         }
     }
-
-    private function sync($table){
+/*
+    protected function sync($table){
         $sql="";
         $exec="";
         try {
@@ -99,7 +100,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
             dieHere();
         }
     }
-
+*/
     public function getDataSet()
     {
         //Now load Dataset
@@ -113,12 +114,6 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
         global $test_path;
         return buildPath($test_path,"testData","$file.xml");
     }
-
-	function __construct($name = NULL, array $data = array(), $dataName = ''){
-		error_log("Initialised ".get_class($this));
-		parent::__construct($name, $data, $dataName);
-	}	
-
 }
 error_log("Exit ".__FILE__);
 ?>
