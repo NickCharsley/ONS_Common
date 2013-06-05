@@ -136,9 +136,8 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
 *   Common Utils
 \************************************************************/
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
-    include_once "script/utils.php";
-    include_once "sm_scripts/utils.php";
-    include_once "const.php";
+    @include_once "script/utils.php";
+    @include_once "const.php";
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'PEAR_ErrorToPEAR_Exception');
 
    
