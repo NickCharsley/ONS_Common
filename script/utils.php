@@ -453,9 +453,6 @@ function getHTMLElement($data,$element,$class=""){
  function dieHere(){
  	krumo::backtrace();
  	$bt=debug_backtrace(0,1);
- 	print_line("dieHere() called at Line ".$bt[0]['line']." of ".$bt[0]['file']);
- 	die();
+ 	throw new Exception("dieHere() called at Line ".$bt[0]['line']." of ".$bt[0]['file']);
  }
- 
- 
 ?>

@@ -65,7 +65,9 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
             return $this->conn;
 
         } catch(PDOException $e) {
+            print_line("Accessing ".$GLOBALS['DB_DBNAME']);
             print_line($e->getMessage());
+            
             dieHere();
         }
     }

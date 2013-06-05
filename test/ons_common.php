@@ -77,6 +77,14 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
 			print ("Listing of Expected Property Files\n");
 			print ("</pre>");
 		}
+                if (isset($TESTMODE)){
+                    foreach($props as $prop)
+                        if ($prop<>"")
+                            error_log("$prop.properties\n");
+                    error_log("$ini\n");
+                    error_log(print_r($vars,true));
+                    error_log("Listing of Expected Property Files\n");                    
+                }
 		return array_keys($vars);
 	}
 
