@@ -9,12 +9,12 @@ class UtilsTest extends PHPUnit_Framework_TestCase
 {    
 
     function testSplitDataObjectConfig(){
-        global $config;
+        global $config,$root_path;
         $config['DB_DataObject']=
                 array(
-                    "database" => "mysql://showmanager:AA5md9qXNdBSKMVp@localhost/showmanager",
-                    "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources\\database\\schema",
-                    "class_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources\\database",
+                    "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
+                    "schema_location" => '{$root_path}\\test\\resources\\database\\schema',
+                    "class_location" => '{$root_path}\\test\\resources\\database',
                     "class_prefix" => "do",
                     "db_driver"	=> "MDB2",
                     "build_views"=> 1,
@@ -24,62 +24,62 @@ class UtilsTest extends PHPUnit_Framework_TestCase
                 );
         $this->assertEquals(array(
                     "build_views"=> 1,
-                    "class_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources\\database",
+                    "class_location" => buildpath($root_path,"test\\resources\\database"),
                     "class_prefix" => "do",
-                    "database"=>"showmanager",
+                    "database"=>"test_ons_common",
                     "db_driver"	=> "MDB2",
                     "driver" => "mysql",
                     "extends"=> "dbRoot",
                     "extends_location" => "dbRoot.php",
                     "generator_var_keyword"=> "public",
                     "host"=>"localhost",
-                    "password"=>"AA5md9qXNdBSKMVp",
-                    "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources\\database\\schema",
-                    "user"=>"showmanager"
+                    "password"=>"bhSTGCsFY32ApKeF",
+                    "schema_location" => buildpath($root_path,"test\\resources\\database\\schema"),
+                    "user"=>"test"
                 ), SplitDataObjectConfig());
     }
 
+    private function dropTables(){
+        //Need to drop all tables in test_ons_common;        
+        // uses MDB2::factory() to create the instance
+        // and also attempts to connect to the host
+        global $config;
+        
+        @$mdb2 =& MDB2::connect($config['DB_DataObject']['database'], $options);        
+        @$mdb2->exec("DROP DATABASE IF EXISTS test_ons_common");
+        @$mdb2->exec("CREATE DATABASE test_ons_common");
+    }
+    
+    
     /**
      * @depends testSplitDataObjectConfig
      * @expectedException Exception
-     * @expectedException Exception
      * @expectedExceptionMessage Exit Called: No updates to run
      */
-    function testMigrateDatabaseNoDirectory(){
+    function testMigrateDatabaseNoDirectory(){        
         global $config;
         $config['DB_DataObject']=
                 array(
-                    "database" => "mysql://test:sas0527@localhost/test_ons_common",
+                    "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
                     "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\no directory",
                 );
-        //Need to drop all tables in test_ons_common;
-        
-        $options = array(
-            'debug'       => 2,            
-        );
-
-        // uses MDB2::factory() to create the instance
-        // and also attempts to connect to the host
-        @$mdb2 =& MDB2::connect($config['DB_DataObject']['database'], $options);        
-        @$mdb2->exec("drop table migration_info");
-        @$mdb2->exec("drop table my_table");
-        @$mdb2->exec("drop table my_other_table");
-        
+        $this->dropTables();
         MigrateDatabase("test");
     }   
     
     /**
-     * @depends testMigrateDatabaseNoDirectory
+     * @depends testSplitDataObjectConfig
      * @expectedException Exception
      * @expectedExceptionMessage Exit Called: Migration Finished
      */
     function testMigrateDatabase(){
         global $config;
         $config['DB_DataObject']=
-                array(
-                    "database" => "mysql://test:sas0527@localhost/test_ons_common",
-                    "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
-                );        
+            array(
+                "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
+                "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
+            );
+        $this->dropTables();
         MigrateDatabase("test");
     }
     
@@ -91,15 +91,15 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     function testMigrateDatabaseNothingToDo(){
         global $config;
         $config['DB_DataObject']=
-                array(
-                    "database" => "mysql://test:sas0527@localhost/test_ons_common",
-                    "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
-                );
+            array(
+                "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
+                "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
+            );
         MigrateDatabase("test");
     }
     
     /**
-     * @depends testMigrateDatabase
+     * @depends testSplitDataObjectConfig
      */
     function testSetupDB(){ 
         global $config,$db;
@@ -112,7 +112,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @depends testMigrateDatabase
+     * @depends testSplitDataObjectConfig
      */
     function testDefaultSetupDB(){        
         global $config,$db;

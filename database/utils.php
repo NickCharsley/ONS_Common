@@ -26,7 +26,7 @@
                 $config['DB_DataObject']=$GLOBALS['DB_DataObject_config_'.$key];
             }
         }
-
+        
         if ($debug) krumo($config);
         if (isset($GLOBALS['TESTMODE'])){
             $prefix="test_";        
@@ -40,8 +40,9 @@
 
             $config['DB_DataObject']['database']=join("/",$db_name);
             //Now need to 'copy' the schema files as they have the wrong name :(
-
-            $d = dir($config['DB_DataObject']['schema_location']);
+            $dns=SplitDataObjectConfig();
+            $d = dir($dns['schema_location']);
+            
             while (false !== ($target = $d->read())) {
                 if (strpos($target,".ini") and substr($target,0,5)!="test_"){
                     $link=str_replace($name, $prefix.$name, $target);
@@ -53,6 +54,10 @@
             }
         }
 
+        $dns=SplitDataObjectConfig();
+        $config['DB_DataObject']['schema_location']=$dns['schema_location'];
+        $config['DB_DataObject']['class_location']=$dns['class_location'];
+        
         if ($debug) krumo($config);
         if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
 
@@ -99,7 +104,18 @@
             if ($GLOBALS["DB_DBNAME"]!=$dbc['database'])
                 throw new Exception("Database Name Mismatch! Globals={$GLOBALS["DB_DBNAME"]}, DataObject={$dbc['database']}");                        
         }
-        
+        //Need to do Variable Replacement
+        foreach ($dbc as $key=>$value){
+            if (!(strpos($value,"{")===false)){
+                $tokens=preg_split('|[{}]|',$value);
+                for($index=0;$index<count($tokens);$index++){
+                    if (substr($tokens[$index],0,1)=="$"){
+                        $tokens[$index]=$GLOBALS[substr($tokens[$index],1)];
+                    }
+                }
+                $dbc[$key]=join('',$tokens);
+            }
+        }
         
         return $dbc;
     }
