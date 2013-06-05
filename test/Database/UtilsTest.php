@@ -24,7 +24,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
                 );
         $this->assertEquals(array(
                     "build_views"=> 1,
-                    "class_location" => buildpath($root_path,"test\\resources\\database"),
+                    "class_location" => $root_path."\\test\\resources\\database",
                     "class_prefix" => "do",
                     "database"=>"test_ons_common",
                     "db_driver"	=> "MDB2",
@@ -34,7 +34,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
                     "generator_var_keyword"=> "public",
                     "host"=>"localhost",
                     "password"=>"bhSTGCsFY32ApKeF",
-                    "schema_location" => buildpath($root_path,"test\\resources\\database\\schema"),
+                    "schema_location" => $root_path."\\test\\resources\\database\\schema",
                     "user"=>"test"
                 ), SplitDataObjectConfig());
     }
