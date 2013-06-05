@@ -106,27 +106,29 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
 
     $include=ini_get("include_path")
-                            /*Project Code*/
-                            .$ips.$root_path
-                            .$ips.$root_path.$fps."script"
-                            .$ips.$root_path.$fps."class"
-                            .$ips.$root_path.$fps."font"
-                            .$ips.$root_path.$fps."pages"
-                            .$ips.$root_path.$fps."extensions"
-                            .$ips.$root_path.$fps."database"
-                            /*Test Code*/
-                            .(isset($test_path)?$ips.$test_path.$fps."class":"")
-                            /*Common Code* /
-                            .$ips.$common_path
-                            .$ips.$common_path.$fps."script"
-                            .$ips.$common_path.$fps."class"
-                            .$ips.$common_path.$fps."font"
-                            .$ips.$common_path.$fps."pages"
-                            .$ips.$common_path.$fps."extensions"
-                            .$ips.$common_path.$fps."googleApi"
-                            .$ips.$common_path.$fps."googleApi".$fps."contrib"
-                            /**/
-            ;
+            /*Project Code*/
+            .$ips.$root_path
+            .$ips.$root_path.$fps."script"
+            .$ips.$root_path.$fps."class"
+            .$ips.$root_path.$fps."font"
+            .$ips.$root_path.$fps."pages"
+            .$ips.$root_path.$fps."extensions"
+            .$ips.$root_path.$fps."database"
+            /*Test Code*/
+            .(isset($test_path)?$ips.$test_path.$fps."class":"")
+            /*Common Code* /
+            .$ips.$common_path
+            .$ips.$common_path.$fps."script"
+            .$ips.$common_path.$fps."class"
+            .$ips.$common_path.$fps."font"
+            .$ips.$common_path.$fps."pages"
+            .$ips.$common_path.$fps."extensions"
+            .$ips.$common_path.$fps."googleApi"
+            .$ips.$common_path.$fps."googleApi".$fps."contrib"
+            /**/
+        ;
+    
+    if (isset($GLOBALS['TESTMODE'])) error_log($include);
     
     ini_set("include_path",$include);
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
