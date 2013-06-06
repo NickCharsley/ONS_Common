@@ -15,38 +15,38 @@ $total_time=array();
 //We do this here so that all of us know what our testmode is :)
 
 if (strpos($system,'.test')>0){
-	//We should be in test mode
-	if (isset($GLOBALS['TESTMODE'])){
-		if ($GLOBALS['TESTMODE']!='test') throw new ErrorException("Using Test URL but in ".$GLOBALS['TESTMODE']." test mode");
-	}
-	$GLOBALS['TESTMODE']="test";
+        //We should be in test mode
+        if (isset($GLOBALS['TESTMODE'])){
+                if ($GLOBALS['TESTMODE']!='test') throw new ErrorException("Using Test URL but in ".$GLOBALS['TESTMODE']." test mode");
+        }
+        $GLOBALS['TESTMODE']="test";
 }
 if (strpos($system,'.adhoc')>0){
-	//We should be in test mode
-	if (isset($GLOBALS['TESTMODE'])){
-		if ($GLOBALS['TESTMODE']!='adhoc') throw new ErrorException("Using Adhoc URL but in ".$GLOBALS['TESTMODE']." test mode");
-	}
-	$GLOBALS['TESTMODE']="adhoc";
+        //We should be in test mode
+        if (isset($GLOBALS['TESTMODE'])){
+                if ($GLOBALS['TESTMODE']!='adhoc') throw new ErrorException("Using Adhoc URL but in ".$GLOBALS['TESTMODE']." test mode");
+        }
+        $GLOBALS['TESTMODE']="adhoc";
 }
 
-	@require_once 'ezc/Base/base.php';
+        @require_once 'ezc/Base/base.php';
 
-	function startTimer($type='page'){
-		global $start_time;
-		$time = microtime();
-		$time = explode(' ', $time);
-		$time = $time[1] + $time[0];
-		$start_time[$type][] = $time;
-	}
-	
-	startTimer();
-	    
+        function startTimer($type='page'){
+                global $start_time;
+                $time = microtime();
+                $time = explode(' ', $time);
+                $time = $time[1] + $time[0];
+                $start_time[$type][] = $time;
+        }
+
+        startTimer();
+
     include_once "$common_path/krumo/class.krumo.php";
-    
+
     function ons_InDrupal(){
         return class_exists('DrupalCacheArray',false);
     }
- 
+
     function getValue(&$data,$tag){
         //Assumption Tag is last thing in text,
         //all data past this point is part of the value
@@ -117,36 +117,36 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         global $db;        
         return PEARError($db->query($sql),$msg,$die);
     }
-        
+
     function ons_autoload($class_name) {
         global $fps;
         if (@fclose(fopen($class_name . '.class.php','r',true))){
-        	debug_error_log("ons_autoload($class_name)");
-        	require_once $class_name . '.class.php';
+                debug_error_log("ons_autoload($class_name)");
+                require_once $class_name . '.class.php';
         }
         else if (@fclose(fopen($class_name . '.php','r',true))){
-        	debug_error_log("ons_autoload($class_name)");            
+                debug_error_log("ons_autoload($class_name)");            
             require_once $class_name . '.php';
         } else if (strpos($class_name,'_')){
-        	debug_error_log("ons_autoload($class_name)");
-        	ons_autoload(str_replace("_",$fps,$class_name));
+                debug_error_log("ons_autoload($class_name)");
+                ons_autoload(str_replace("_",$fps,$class_name));
         }        
     }
- 
+
     function ons_ezc_autoload( $className )
     {
-    	@ezcBase::autoload( $className );
+        @ezcBase::autoload( $className );
     }
-    
+
     function register_autoloader(){
         global $autoloader;
         if (!$autoloader){
-        	spl_autoload_register('ons_ezc_autoload');
+                spl_autoload_register('ons_ezc_autoload');
             spl_autoload_register('ons_autoload');
             $autoloader+=2;
         }
     }
-    
+
     function unregister_autoloader(){
         global $autoloader;
         if ($autoloader){
@@ -155,12 +155,12 @@ function PEARError($obj,$msg="Pear Error",$die=true){
             $autoloader-=2;
         }
     }
-    
+
     function resetIncludePath(){
         global $inc_path;
         ini_set("include_path",$inc_path);
     }
-    
+
     function debug_print($text){
         global $local;
         if ($local) {
@@ -175,7 +175,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         }
         debug_error_log($text);
     }
-    
+
     function debug_error_log($message){
         if (is_array($message)){
             error_log(var_export($message,true));           
@@ -186,13 +186,13 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         }
         else error_log($message);
     }    
-    
+
     function print_pre($data,$ret=false){
-    	global $web;
-    	if ($web)
-        	$strRet="<pre>".htmlspecialchars(print_r($data,true))."</pre>\n";
-    	else 
-    		$strRet=print_r($data,true)."\n";
+        global $web;
+        if ($web)
+                $strRet="<pre>".htmlspecialchars(print_r($data,true))."</pre>\n";
+        else 
+                $strRet=print_r($data,true)."\n";
         if (!$ret) echo $strRet;
         return $strRet;
     }
@@ -208,7 +208,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
     function AddButton($text,$action,$target=""){
         return "<a class='Button' href='$action'".($target==''?'':" target='$target' ")."><span>$text</span></a>\n";
     }
-    
+
     function AddIconButton($icon,$text,$action){
         return "<a class='Button' href='$action'><img src='$icon' alt='$text'/></a>\n";
     }
@@ -232,7 +232,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         $numargs = func_num_args();
 
         //print_pre($arg_list);
-        
+
         $ret=$arg_list[0];
         if (substr($ret,-1)=="/") $ret=substr($ret,0,-1);
         if (substr($ret,-1)=="\\") $ret=substr($ret,0,-1);
@@ -249,7 +249,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         //print_line($ret);
         return $ret;
     }
-    
+
 
 function unwrap($text){
     /**/
@@ -296,7 +296,7 @@ function createUUID() {
     function safeunlink($file){
         if (file_exists($filename)) unlink($file);
     }
-    
+
     function safe_include($filename){
         if (file_exists($filename)){
             include '$filename';
@@ -320,34 +320,34 @@ function createUUID() {
    }
 
    function stopTimer($type){
-   		pageTime($type);
+                pageTime($type);
    }
-   
-   function totalTimes(){
-   	global $total_time;
-   	foreach ($total_time as $type=>$data){
-   		$time=0;
-   		foreach($data as $interval)
-   			$time+=$interval;
-   		print_line("All $type generated in $time seconds.");
-   	}	
-   }
-   
-   function pageTime($type='page'){
-   	global $start_time;
-   	global $total_time;
-   	
-   	$time = microtime();
-   	$time = explode(' ', $time);
-   	$time = $time[1] + $time[0];
-   	$finish = $time;
-   	$i=count($start_time[$type])-1;
-   	$total_time[$type][$i] = round(($finish - $start_time[$type][$i]), 4);
-   	print_line("$type generated in {$total_time[$type][$i]} seconds.");
-   }
-    
-   
-   
+
+function totalTimes(){
+    global $total_time;
+    foreach ($total_time as $type=>$data){
+       $time=0;
+       foreach($data as $interval)
+               $time+=$interval;
+       print_line("All $type generated in $time seconds.");
+    }	
+}
+
+function pageTime($type='page'){
+     global $start_time;
+     global $total_time;
+
+     $time = microtime();
+     $time = explode(' ', $time);
+     $time = $time[1] + $time[0];
+     $finish = $time;
+     $i=count($start_time[$type])-1;
+     $total_time[$type][$i] = round(($finish - $start_time[$type][$i]), 4);
+     print_line("$type generated in {$total_time[$type][$i]} seconds.");
+}
+
+
+
 function getHTMLElement($data,$element,$class=""){
     $data=str_replace("&nbsp;"," ",$data);
     if (is_array($element)){
@@ -367,35 +367,33 @@ function getHTMLElement($data,$element,$class=""){
     return $html;
 }
 
-   
- register_autoloader();
+register_autoloader();
 
- function PEAR_ErrorToPEAR_Exception($err)
- {
- 	global $web;
- 	if ($web) {
- 		krumo::enable();
- 		Krumo($err);
- 	}
- 	else {
- 		error_log($err->getUserInfo());
- 	}
- 	if ($err->getCode()) {
- 		throw new PEAR_Exception($err->getMessage(),
- 				$err->getCode());
- 	}
- 	throw new PEAR_Exception($err->getMessage());
- }
+function PEAR_ErrorToPEAR_Exception($err)
+{
+    global $web,$TESTMODE;
+    if ($web and !isset($TESTMODE)) {
+        krumo::enable();
+        Krumo($err);
+    }
+    else {
+        error_log($err->getUserInfo());
+    }
+    if ($err->getCode()) {
+        throw new PEAR_Exception($err->getMessage(),$err->getCode());
+    }
+    throw new PEAR_Exception($err->getMessage());
+}
 
  function exception_handler($exception) {
- 	//If we have a xdebug_message we will just use it
- 	if (isset($exception->xdebug_message)){
- 		print "<font size='1'><table class='xdebug-error xe-parse-error' dir='ltr' border='1' cellspacing='0' cellpadding='1'>";
- 		print $exception->xdebug_message;
- 		print "</table>";
- 		return;
- 	}
- 	//krumo::enable();
+        //If we have a xdebug_message we will just use it
+        if (isset($exception->xdebug_message)){
+                print "<font size='1'><table class='xdebug-error xe-parse-error' dir='ltr' border='1' cellspacing='0' cellpadding='1'>";
+                print $exception->xdebug_message;
+                print "</table>";
+                return;
+        }
+        //krumo::enable();
  // these are our templates
     $traceline = "#%s %s(%s): %s(%s)";
     $msg = "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
@@ -438,21 +436,21 @@ function getHTMLElement($data,$element,$class=""){
 
     // log or echo as you please
     error_log($msg);
-	print($msg);    
+        print($msg);    
  }
 
  function flush_buffers(){
- 	//ob_end_flush();
- 	//ob_flush();
-	flush();
- 	//ob_start();
+        //ob_end_flush();
+        //ob_flush();
+        flush();
+        //ob_start();
  }
- 
- set_exception_handler('exception_handler');
 
- function dieHere(){
- 	krumo::backtrace();
- 	$bt=debug_backtrace(0,1);
- 	throw new Exception("dieHere() called at Line ".$bt[0]['line']." of ".$bt[0]['file']);
- }
+set_exception_handler('exception_handler');
+
+function dieHere(){
+    krumo::backtrace();
+    $bt=debug_backtrace(0,1);
+    throw new Exception("dieHere() called at Line ".$bt[0]['line']." of ".$bt[0]['file']);
+}
 ?>
