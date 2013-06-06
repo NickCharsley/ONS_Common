@@ -139,7 +139,7 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
     @include_once "script/utils.php";
     @include_once "const.php";
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'PEAR_ErrorToPEAR_Exception');
-
+    krumo::disable();
    
 //************************************************
 error_log("Exit ".__FILE__);
