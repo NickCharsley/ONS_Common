@@ -57,11 +57,11 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Exit Called: No updates to run
      */
     function testMigrateDatabaseNoDirectory(){        
-        global $config;
+        global $config,$test_path;
         $config['DB_DataObject']=
                 array(
                     "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
-                    "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\no directory",
+                    "schema_location" => buildPath($test_path,"no directory"),
                 );
         $this->dropTables();
         MigrateDatabase("test");
@@ -73,11 +73,11 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Exit Called: Migration Finished
      */
     function testMigrateDatabase(){
-        global $config;
+        global $config,$test_path;
         $config['DB_DataObject']=
             array(
                 "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
-                "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
+                "schema_location" => buildPath($test_path,"resources"),
             );
         $this->dropTables();
         MigrateDatabase("test");
@@ -89,11 +89,11 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Exit Called: Database is currently at version 2
      */
     function testMigrateDatabaseNothingToDo(){
-        global $config;
+        global $config,$test_path;
         $config['DB_DataObject']=
             array(
                 "database" => "mysql://test:bhSTGCsFY32ApKeF@localhost/test_ons_common",
-                "schema_location" => "C:\\users\\nick\\workspace\\ons_Common\\test\\resources",
+                "schema_location" => buildPath($test_path,"resources"),
             );
         MigrateDatabase("test");
     }

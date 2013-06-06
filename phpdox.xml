@@ -2,7 +2,7 @@
 <!--  This is a skeleton phpDox config file - Check http://phpDox.de for latest version and more info -->
 
 <phpdox xmlns="http://phpdox.de/config">
-	<project name="ons_GoogleAnalytics" source="." workdir="build/phpdox">
+	<project name="ons_Common" source="." workdir="build/phpdox">
 		<collector publiconly="false">
 			<include mask="*.php" />
 		</collector>
