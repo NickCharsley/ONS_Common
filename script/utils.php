@@ -121,16 +121,27 @@ function PEARError($obj,$msg="Pear Error",$die=true){
     function ons_autoload($class_name) {
         global $fps;
         if (@fclose(fopen($class_name . '.class.php','r',true))){
-                debug_error_log("ons_autoload($class_name)");
-                require_once $class_name . '.class.php';
+            debug_error_log("ons_autoload($class_name)");
+            require_once $class_name . '.class.php';
         }
         else if (@fclose(fopen($class_name . '.php','r',true))){
-                debug_error_log("ons_autoload($class_name)");            
+            debug_error_log("ons_autoload($class_name)");            
             require_once $class_name . '.php';
+        } 
+        else if (@fclose(fopen(strtolower($class_name) . '.class.php','r',true))){
+            debug_error_log("ons_autoload($class_name)");
+            require_once strtolower($class_name) . '.class.php';
+        }
+        else if (@fclose(fopen(strtolower($class_name) . '.php','r',true))){
+            debug_error_log("ons_autoload($class_name)");            
+            require_once strtolower($class_name) . '.php';
         } else if (strpos($class_name,'_')){
-                debug_error_log("ons_autoload($class_name)");
-                ons_autoload(str_replace("_",$fps,$class_name));
-        }        
+            debug_error_log("ons_autoload($class_name)");
+            ons_autoload(str_replace("_",$fps,$class_name));
+        } else {
+            debug_error_log("failed ons_autoload($class_name)");
+        }
+        
     }
 
     function ons_ezc_autoload( $className )
