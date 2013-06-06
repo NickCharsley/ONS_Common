@@ -8,6 +8,13 @@
 class UtilsTest extends PHPUnit_Framework_TestCase
 {    
 
+    static function setUpBeforeClass() {
+        parent::setUpBeforeClass();
+        
+        self::dropTables();
+        
+    }
+    
     function testSplitDataObjectConfig(){
         global $config,$root_path;
         $config['DB_DataObject']=
@@ -39,13 +46,13 @@ class UtilsTest extends PHPUnit_Framework_TestCase
                 ), SplitDataObjectConfig());
     }
 
-    private function dropTables(){
+    static private function dropTables(){
         //Need to drop all tables in test_ons_common;        
         // uses MDB2::factory() to create the instance
         // and also attempts to connect to the host
         global $config;
-        
-        @$mdb2 =& MDB2::connect($config['DB_DataObject']['database'], $options);        
+                        
+        @$mdb2 =& MDB2::connect('mysql://test:bhSTGCsFY32ApKeF@localhost');        
         @$mdb2->exec("DROP DATABASE IF EXISTS test_ons_common");
         @$mdb2->exec("CREATE DATABASE test_ons_common");
     }
