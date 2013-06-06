@@ -22,6 +22,8 @@ class PHPDbMigrate {
 
     function run($opt_version=NULL, $environment="development") {
         $error = FALSE;
+        //By default Driver is ucfirst!
+        $this->config[$environment]['db']['driver']=ucfirst(strtolower($this->config[$environment]['db']['driver']));
         require_once("databases/".$this->config[$environment]['db']['driver'].".php");
         $this->db = new $this->config[$environment]['db']['driver']($this->config[$environment]['db']);
         $version = $this->db->get_version();
