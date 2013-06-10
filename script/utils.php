@@ -152,7 +152,7 @@ function PEARError($obj,$msg="Pear Error",$die=true){
     function register_autoloader(){
         global $autoloader;
         if (!$autoloader){
-                spl_autoload_register('ons_ezc_autoload');
+            spl_autoload_register('ons_ezc_autoload');
             spl_autoload_register('ons_autoload');
             $autoloader+=2;
         }

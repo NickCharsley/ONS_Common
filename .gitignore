@@ -167,4 +167,5 @@ sencha/
 *.log
 backup/*
 build-local.properties
-/nbproject/private/
+nbproject/*
+/nul

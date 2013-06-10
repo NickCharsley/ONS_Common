@@ -61,6 +61,8 @@ class Base {
             $this->attributes[strtolower(trim($attribute[0]))] = trim($attribute[1]);
         }
     }
-
-}
-?>
+    public function logException($message){
+        error_log($message);
+        error_log($this->query);
+    }
+}?>

@@ -84,14 +84,14 @@ class PHPDbMigrate {
         $executables = array();
 
         foreach($commands as $command) {
-            //print($command['data']."\n");
+            error_log("Parsing ".$command['command']."\n");
             $this->_load_executables($command, $executables);
         }
 
         foreach($executables as $executable) {
             try {
                 $executable->execute($this->config["return_type"]);
-                error_log("");
+                error_log("Done");
             } catch(Exception $e) {
                 if ($up == "up") {
                     $old_version = $this->db->get_version();
@@ -99,7 +99,8 @@ class PHPDbMigrate {
                 } else {
                     $this->db->update_schema($files_list[$i]['number']);
                 }
-                throw new Exception("database fail");
+                $executable->logException($e->getMessage());
+                throw new Exception("database fail: ".$e->getMessage());
             }
         }
 

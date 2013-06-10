@@ -78,6 +78,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      * @depends testSplitDataObjectConfig
      * @expectedException Exception
      * @expectedExceptionMessage Exit Called: Migration Finished
+     * @large
      */
     function testMigrateDatabase(){
         global $config,$test_path;
@@ -91,7 +92,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @depends testSplitDataObjectConfig
+     * @depends testMigrateDatabase
      * @expectedException Exception
      * @expectedExceptionMessage Exit Called: Database is currently at version 2
      */
