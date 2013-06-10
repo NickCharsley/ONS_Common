@@ -162,11 +162,11 @@ pip-log.txt
 .DS_Store
 
 
-errorLogs/*
+errorLogs/
 sencha/
 *.log
-backup/*
+backup/
 build-local.properties
-nbproject/*
+nbproject/
 nul
-test/phpunit.xml
+phpunit.xml
