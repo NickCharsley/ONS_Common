@@ -95,6 +95,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      * @depends testMigrateDatabase
      * @expectedException Exception
      * @expectedExceptionMessage Exit Called: Database is currently at version 2
+     * @large
      */
     function testMigrateDatabaseNothingToDo(){
         global $config,$test_path;
