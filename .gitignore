@@ -168,4 +168,5 @@ sencha/
 backup/*
 build-local.properties
 nbproject/*
-/nul
+nul
+test/phpunit.xml
