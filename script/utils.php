@@ -138,6 +138,9 @@ function PEARError($obj,$msg="Pear Error",$die=true){
         } else if (strpos($class_name,'_')){
             debug_error_log("ons_autoload($class_name)");
             ons_autoload(str_replace("_",$fps,$class_name));
+        } else if (substr($class_name,0,2)=='do'){
+            debug_error_log("ons_autoload($class_name)");
+            ons_autoload(substr($class_name,2));
         } else {
             debug_error_log("failed ons_autoload($class_name)");
         }

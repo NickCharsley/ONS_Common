@@ -170,3 +170,9 @@ build-local.properties
 nbproject/
 nul
 phpunit.xml
+
+cache.*
+test_*.ini
+*.php.*
+test/phpunit.xml
+xdebug_remote.log
