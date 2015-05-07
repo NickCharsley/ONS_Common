@@ -176,3 +176,4 @@ test_*.ini
 *.php.*
 test/phpunit.xml
 xdebug_remote.log
+/vendor/

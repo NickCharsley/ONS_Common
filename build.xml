@@ -8,10 +8,17 @@
     <property file="${basedir}/build-all.properties"/>
     <property file="${os-build}"/>
 
-    <property name="src"  location="${workspace}"/> 
+    <property name="src"  location="${workspace}"/>
     <property name="test" location="${workspace}/test"/>
 
     <!--echoproperties/-->
+
+    <target name="composer">
+        <exec executable="${composerexecutable}">
+            <arg value="install" />
+            <arg value="-v" />
+        </exec>
+    </target>
 
     <target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
     <target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -60,80 +67,83 @@
 
             <fileset dir="${src}">
                 <include name="**/*.php" />
+                <exclude name="vendor/**" />
                 <modified />
             </fileset>
         </apply>
     </target>
 
-    <target name="phploc" description="Measure project size using PHPLOC">
+    <target name="phploc" depends="composer" description="Measure project size using PHPLOC">
         <exec executable="${phploc}">
             <arg value="--log-csv" />
             <arg value="${basedir}/build/logs/phploc.csv" />
             <arg value="--exclude" />
-            <arg value="test" />					
+            <arg value="test" />
             <arg value="--exclude" />
-            <arg value="googleApi" />					
+            <arg value="googleApi" />
             <arg value="--exclude" />
-            <arg value="krumo" />					
+            <arg value="krumo" />
             <arg value="--exclude" />
-            <arg value="sencha" />					
+            <arg value="sencha" />
+            <arg value="--exclude" />
+            <arg value="vendor" />
             <arg path="${src}" />
         </exec>
     </target>
 
-    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+    <target name="pdepend" depends="composer" description="Calculate software metrics using PHP_Depend">
         <exec executable="${pdepend}">
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-            <arg value="--ignore=test,googleApi,krumo,sencha" />
+            <arg value="--ignore=test,googleApi,krumo,sencha,vendor" />
             <arg path="${src}" />
         </exec>
     </target>
 
-    <target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+    <target name="phpmd" depends="composer" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${phpmd}">
             <arg path="${src}" />
             <arg value="text" />
             <!-- Removed controversial as a Too messy :) -->
             <arg value="codesize,design,naming,unusedcode" />
             <arg value="--exclude" />
-            <arg value="test,googleApi,krumo,sencha" />					
+            <arg value="test,googleApi,krumo,sencha,vendor" />
         </exec>
     </target>
 
-    <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+    <target name="phpmd-ci" depends="composer" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
         <exec executable="${phpmd}">
             <arg path="${src}" />
             <arg value="xml" />
             <!-- Removed ,controversial as it is a bit... :) -->
             <arg value="codesize,design,naming,unusedcode" />
             <arg value="--exclude" />
-            <arg value="test,googleApi,krumo,sencha" />					
+            <arg value="test,googleApi,krumo,sencha.vendor" />
             <arg value="--reportfile" />
             <arg value="${basedir}/build/logs/pmd.xml" />
         </exec>
     </target>
 
-    <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+    <target name="phpcs" depends="composer" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${phpcs}">
             <arg value="--standard=PEAR" />
-            <arg value="--ignore=test,googleApi,krumo,sencha" />
+            <arg value="--ignore=test,googleApi,krumo,sencha,vendor" />
             <arg path="${src}" />
         </exec>
     </target>
 
-    <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+    <target name="phpcs-ci" depends="composer" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
         <exec executable="${phpcs}" output="nul">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
             <arg value="--standard=PEAR" />
-            <arg value="--ignore=test,googleApi,krumo,sencha" />
+            <arg value="--ignore=test,googleApi,krumo,sencha,vendor" />
             <arg path="${src}" />
         </exec>
     </target>
 
-    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+    <target name="phpcpd" depends="composer" description="Find duplicate code using PHPCPD">
         <exec executable="${phpcpd}">
             <arg value="--log-pmd" />
             <arg value="${basedir}/build/logs/pmd-cpd.xml" />
@@ -142,24 +152,26 @@
             <arg value="--exclude"/>
             <arg value="test"/>
             <arg value="--exclude" />
-            <arg value="googleApi" />					
+            <arg value="googleApi" />
             <arg value="--exclude" />
-            <arg value="krumo" />					
+            <arg value="krumo" />
             <arg value="--exclude" />
-            <arg value="sencha" />					
+            <arg value="sencha" />
+            <arg value="--exclude" />
+            <arg value="vendor" />
             <arg path="${src}" />
         </exec>
     </target>
 
-    <target name="phpdox" description="Generate API documentation using phpDox">
+    <target name="phpdox" depends="composer" description="Generate API documentation using phpDox">
         <exec executable="${phpdox}"/>
     </target>
 
-    <target name="phpunit" description="Run unit tests with PHPUnit">
+    <target name="phpunit" depends="composer" description="Run unit tests with PHPUnit">
         <exec executable="${phpunit}" dir="test" failonerror="true"/>
     </target>
 
-    <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
+    <target name="phpcb" depends="composer" description="Aggregate tool output with PHP_CodeBrowser">
         <exec executable="${phpcb}">
             <arg value="--log" />
             <arg path="${basedir}/build/logs" />
