@@ -7,8 +7,17 @@
         "phpunit/php-invoker": "*",
         "phpunit/dbunit": ">=1.2",
         "phpunit/phpunit-selenium": ">=1.2",
-
+        "theseer/phpdox": "dev-master",
         "phpspec/phpspec": "~2.0"
         
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://satisserver.ons.vm:4680"
+        },
+        {
+            "packagist": false
+        }
+    ]
 }
