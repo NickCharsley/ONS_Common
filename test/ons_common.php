@@ -24,6 +24,8 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 *   Setup
 \************************************************************/
 
+include_once '../vendor/autoload.php';
+
 global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_path,$system,$do_ini,$term;
 
 	function loadProperties(){
@@ -105,7 +107,7 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
 
     if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
 
-    $include=ini_get("include_path")
+    $include="."
             /*Project Code* /
             .$ips.$root_path
             .$ips.$root_path.$fps."script"
@@ -118,15 +120,16 @@ global $web,$root,$root_path,$test_path,$ips,$fps,$db,$mobile,$local,$common_pat
             .(isset($test_path)?$ips.$test_path.$fps."class":"")
             /*Common Code*/
             .$ips.$common_path
-            .$ips.$common_path.$fps."script"
-            .$ips.$common_path.$fps."class"
-            .$ips.$common_path.$fps."font"
-            .$ips.$common_path.$fps."pages"
-            .$ips.$common_path.$fps."extensions"
-            .$ips.$common_path.$fps."phpdbmigrate"
-            .$ips.$common_path.$fps."googleApi"
-            .$ips.$common_path.$fps."googleApi".$fps."contrib"
+            /*.$ips.$common_path.$fps."script"
+            /*.$ips.$common_path.$fps."class"
+            /*.$ips.$common_path.$fps."font"
+            /*.$ips.$common_path.$fps."pages"
+            /*.$ips.$common_path.$fps."extensions"
+            /*.$ips.$common_path.$fps."phpdbmigrate"
+            /*.$ips.$common_path.$fps."googleApi"
+            /*.$ips.$common_path.$fps."googleApi".$fps."contrib"
             /**/
+            .$ips.ini_get("include_path")
         ;
     
     if (isset($GLOBALS['TESTMODE'])) error_log($include);

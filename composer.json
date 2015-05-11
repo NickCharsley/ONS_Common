@@ -1,15 +1,19 @@
  {
     "name": "ons/common",
+    "description":"Old Style Old Nick Software Common Functions and Includes",
     "require-dev": {
-        "php": ">=5.3.3",
-        
         "phpunit/phpunit": "4.1.*",
         "phpunit/php-invoker": "*",
         "phpunit/dbunit": ">=1.2",
         "phpunit/phpunit-selenium": ">=1.2",
         "theseer/phpdox": "dev-master",
         "phpspec/phpspec": "~2.0"
-        
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "pear/pear": "dev-master",
+        "pear/pear_exception": "1.0.0",
+        "oodle/krumo": "dev-master"
     },
     "repositories": [
         {

@@ -6,15 +6,15 @@
  include_once("database/utils.php");
  
 class UtilsTest extends PHPUnit_Framework_TestCase
-{    
+{
 
     static function setUpBeforeClass() {
         parent::setUpBeforeClass();
-        
+
         self::dropTables();
-        
+
     }
-    
+
     function testSplitDataObjectConfig(){
         global $config,$root_path;
         $config['DB_DataObject']=
@@ -47,23 +47,23 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     }
 
     static private function dropTables(){
-        //Need to drop all tables in test_ons_common;        
+        //Need to drop all tables in test_ons_common;
         // uses MDB2::factory() to create the instance
         // and also attempts to connect to the host
         global $config;
-                        
-        @$mdb2 =& MDB2::connect('mysql://test:bhSTGCsFY32ApKeF@localhost');        
+                
+        @$mdb2 =& MDB2::connect('mysql://test:bhSTGCsFY32ApKeF@localhost');
         @$mdb2->exec("DROP DATABASE IF EXISTS test_ons_common");
         @$mdb2->exec("CREATE DATABASE test_ons_common");
     }
-    
-    
+
+
     /**
      * @depends testSplitDataObjectConfig
      * @expectedException Exception
      * @expectedExceptionMessage Exit Called: No updates to run
      */
-    function testMigrateDatabaseNoDirectory(){        
+    function testMigrateDatabaseNoDirectory(){
         global $config,$test_path;
         $config['DB_DataObject']=
                 array(
@@ -72,8 +72,8 @@ class UtilsTest extends PHPUnit_Framework_TestCase
                 );
         $this->dropTables();
         MigrateDatabase("test");
-    }   
-    
+    } 
+
     /**
      * @depends testSplitDataObjectConfig
      * @expectedException Exception
@@ -90,7 +90,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
         $this->dropTables();
         MigrateDatabase("test");
     }
-    
+
     /**
      * @depends testMigrateDatabase
      * @expectedException Exception
@@ -106,29 +106,29 @@ class UtilsTest extends PHPUnit_Framework_TestCase
             );
         MigrateDatabase("test");
     }
-    
+
     /**
      * @depends testSplitDataObjectConfig
      */
     function testSetupDB(){ 
         global $config,$db;
-        
+
         $config=null;
         $db=null;
-        
+
         setupDB(dirname(dirname(__FILE__))."/resources", "build.ini", false);
         $this->assertNotNull($db);
     }
-    
+
     /**
      * @depends testSplitDataObjectConfig
      */
-    function testDefaultSetupDB(){        
+    function testDefaultSetupDB(){
         global $config,$db;
-        
+
         $config=null;
         $db=null;
-        
+
         setupDB(dirname(dirname(__FILE__))."/resources");
         $this->assertNotNull($db);
     }
