@@ -8,7 +8,7 @@ class Code extends Base {
     }
 
     function execute($linefeed = "\n") {
-        error_log("Running Code");
+         error_log( "Running Code{$linefeed}");
         eval($this->query);
     }
 }

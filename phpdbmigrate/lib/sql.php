@@ -9,7 +9,7 @@ class Sql extends Base {
     }
 
     function execute($linefeed = "\n") {
-        error_log("Running sql");
+         error_log( "Running sql{$linefeed}");
         $this->db->execute_raw_query($this->query);
         return True;
     }

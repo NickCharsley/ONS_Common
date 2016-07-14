@@ -1,0 +1,12 @@
+#==============================================
+# Version: .1RC1
+# Author: Scott Krutsinger
+#==============================================
+1. Initial Release.
+
+#==============================================
+# Version: .1RC2
+# Author: Scott Krutsinger
+#==============================================
+1. Mysql DB support for all migration types.
+2. mysql and mysqli db connections supported

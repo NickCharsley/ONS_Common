@@ -9,12 +9,12 @@ class AddIndex extends Base {
     }
 
     function execute($linefeed = "\n") {
-        error_log("Running add index to: " . $this->table . ", column: " . $this->column_name);
+         error_log( "Running add index to: " . $this->table . ", column: " . $this->column_name . $linefeed);
         $this->db->execute_raw_query($this->query);
         return True;
     }
 
-    private function _determine_attributes($query) {
+    function _determine_attributes($query) {
         $query = $this->_trim_table($query);
         $query = $this->_trim_column_name($query);
         $this->_build_index_dictionary($query);
@@ -22,7 +22,7 @@ class AddIndex extends Base {
         return $this->db->format_add_index($this->table, $this->column_name, $this->attributes);
     }
 
-    private function _build_index_dictionary($query) {
+    function _build_index_dictionary($query) {
         $attributes = array();
         $start = strpos($query, "[");
 

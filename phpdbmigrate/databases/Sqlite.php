@@ -62,18 +62,18 @@ class Sqlite extends Base_db {
         return "";
     }
 
-    private function _get_connection($config) {
+    function _get_connection($config) {
         $this->connection =& new SQLiteDatabase($config['database'], 0666, $error) or die($error);
     }
 
-    private function _create_schema() {
+    function _create_schema() {
         $this->execute_raw_query("DROP TABLE IF EXISTS schema_info;");
         $this->execute_raw_query("CREATE TABLE schema_info(version varchar(255) default '000');");
         $this->execute_raw_query("INSERT INTO schema_info (version) VALUES ('000');");
         return 0;
     }
 
-    private function _build_remainder($attributes) {
+    function _build_remainder($attributes) {
         $string = "";
 
         if (array_key_exists('not_null', $attributes) && strtolower($attributes['not_null']) == 'true') {

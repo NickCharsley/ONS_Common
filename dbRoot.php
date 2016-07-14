@@ -14,6 +14,7 @@
 //************************************************
 //TODO:any generic code for dbRoot.php goes here
 class dbRoot extends DB_DataObject {	
+    static function clearCache($table=""){}
 }
 
 if (class_exists('gtk',false)) {

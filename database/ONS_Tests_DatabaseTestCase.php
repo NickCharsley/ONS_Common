@@ -20,6 +20,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
     protected function setUp()
     {
         $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
+        dbRoot::clearCache();
         parent::setUp();
         $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
     }
@@ -61,6 +62,7 @@ abstract class ONS_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_Te
                 }
                 $this->getConnection()->getConnection()->query("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
   */
+                $this->assertTrue(LoadDatabase::testInitaliseDatabase(true));
                 }
             return $this->conn;
 

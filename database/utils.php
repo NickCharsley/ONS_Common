@@ -12,80 +12,87 @@
     include_once('ons_common.php');
  error_log("Enter ".__FILE__);
 //************************************************
-    require_once("DB/DataObject/FormBuilder/QuickForm.php"); 
+require_once("DB/DataObject/FormBuilder/QuickForm.php"); 
 
-    function setupDB($root_path,$do_ini="build.ini",$debug=false){
-        
-        global $config,$db;
-        
-        $target="production";
-        $config = parse_ini_file(buildpath($root_path,"database",$do_ini), true);
-        //We may override this from Globals
-        foreach(array_keys($config['DB_DataObject']) as $key){
-            if (isset($GLOBALS['DB_DataObject_config_'.$key])){
-                $config['DB_DataObject']=$GLOBALS['DB_DataObject_config_'.$key];
-            }
+function setupDB($root_path,$do_ini="build.ini",$debug=false){
+    global $config,$db;
+
+    $target="production";
+    $config = parse_ini_file(buildpath($root_path,"database",$do_ini), true);
+    //We may override this from Globals
+    foreach(array_keys($config['DB_DataObject']) as $key){
+        if (isset($GLOBALS['DB_DataObject_config_'.$key])){
+            $config['DB_DataObject'][$key]=$GLOBALS['DB_DataObject_config_'.$key];
         }
+    }
         
-        if ($debug) krumo($config);
-        if (isset($GLOBALS['TESTMODE'])){
-            $prefix="test_";        
-            if ($GLOBALS['TESTMODE']=="adhoc")
-                $prefix.="adhoc_";
-            $target=substr($prefix,0,-1);
-            $db_name=split("/",$config['DB_DataObject']['database']);
+    if ($debug) krumo($config);
+    if (isset($GLOBALS['TESTMODE'])){
+        $prefix="test_";        
+        if ($GLOBALS['TESTMODE'] == "adhoc") {
+            $prefix.="adhoc_";
+        }
+        $target=substr($prefix,0,-1);
+        $db_name=split("/",$config['DB_DataObject']['database']);
 
-            $name=$db_name[count($db_name)-1];
-            $db_name[count($db_name)-1]=$prefix.$name;
+        $name=$db_name[count($db_name)-1];
+        $db_name[count($db_name)-1]=$prefix.$name;
 
-            $config['DB_DataObject']['database']=join("/",$db_name);
-            //Now need to 'copy' the schema files as they have the wrong name :(
-            $dns=SplitDataObjectConfig();
-            $d = dir($dns['schema_location']);
+        $config['DB_DataObject']['database']=join("/",$db_name);
+        //if we have a global DNS defined need to update it as well!!!
+        //This is done in phpunit for testing look in test dir!!!
+        //Now need to 'copy' the schema files as they have the wrong name :(
+        $dns=SplitDataObjectConfig();
+        $d = dir($dns['schema_location']);
             
-            while (false !== ($target = $d->read())) {
-                if (strpos($target,".ini") and substr($target,0,5)!="test_"){
-                    $link=str_replace($name, $prefix.$name, $target);
-                    if ($link<>$target){
-                        @unlink(buildpath($d->path,$link));
-                        link(buildpath($d->path,$target),buildpath($d->path,$link));
-                    }
+        while (false !== ($target = $d->read())) {
+            if (strpos($target,".ini") and substr($target,0,5)!="test_"){
+                $link=str_replace($name, $prefix.$name, $target);
+                if ($link<>$target){
+                    @unlink(buildpath($d->path,$link));
+                    //print("link(".buildpath($d->path,$target).",".buildpath($d->path,$link).")\n");
+                    copy(buildpath($d->path,$target),buildpath($d->path,$link));
                 }
             }
         }
-
-        $dns=SplitDataObjectConfig();
-        $config['DB_DataObject']['schema_location']=$dns['schema_location'];
-        $config['DB_DataObject']['class_location']=$dns['class_location'];
-        
-        if ($debug) krumo($config);
-        if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
-
-        foreach($config as $class=>$values) {
-            $options = &PEAR::getStaticProperty($class,'options');
-            $options = $values;
-        }
-        if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
-
-        PEARError($db = MDB2::connect($config['DB_DataObject']['database']),"Early out");
-        //$db->setFetchMode(DB_FETCHMODE_ASSOC);
-        $db->setFetchMode(MDB2_FETCHMODE_ASSOC);
-        set_time_limit(0);
-        DB_DataObject::debugLevel(5);
-        if ($debug)	showload("t_dimension"); 		
-        if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
-
-        DB_DataObject::debugLevel($debug?5:0);
-
-        if ($debug) krumo($db);
-        try {
-            MigrateDatabase($target);
-        } catch(Exception $e){
-            //Should really Set Exception level and 
-        }
-        
-        return $db;
     }
+
+    $dns=SplitDataObjectConfig();
+    $config['DB_DataObject']['schema_location']=$dns['schema_location'];
+    $config['DB_DataObject']['class_location']=$dns['class_location'];
+
+    if ($debug) krumo($config);
+    if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+
+    foreach($config as $class=>$values) {
+        $options = &PEAR::getStaticProperty($class,'options');
+        $options = $values;
+    }
+    if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+
+    if ($debug) print_r($config['DB_DataObject']);
+    
+    PEARError($db = MDB2::connect($config['DB_DataObject']['database']),"Early out");
+    //$db->setFetchMode(DB_FETCHMODE_ASSOC);
+    $db->setFetchMode(MDB2_FETCHMODE_ASSOC);
+    set_time_limit(0);
+    DB_DataObject::debugLevel(5);
+    if ($debug)	showload("Exhibition"); 		
+    if ($debug) print(__FILE__."(".__LINE__.")<br/>\n");
+
+    DB_DataObject::debugLevel($debug?5:0);
+
+    if ($debug) krumo($db);    
+    $tmp=tempnam(buildpath($root_path,"database"), "ini").".ini";
+    //need to write out tmp.ini               
+    write_ini_file($tmp, $config);
+    try {
+        MigrateDatabase($target,$tmp);
+    } catch(Exception $e){
+        //Should really Set Exception level and 
+    }
+    return $db;
+}
 
     /*
      * Really only split DNS :)
@@ -98,11 +105,11 @@
         //If $GLOBALS is set we should validate and die if different database;
         if (isset($GLOBALS["DB_DSN"])){
                 if ($GLOBALS["DB_DSN"]!=$dbc['driver'].":host=".$dbc['host'].";dbname=".$dbc['database'])
-                    throw new Exception("DSN Mismatch! Globals={$GLOBALS["DB_DSN"]}, DataObject=".$dbc['driver'].":host=".$dbc['host'].";dbname=".$dbc['database']);                        
+                    throw new Exception("DSN Mismatch!\n\tGlobals   ={$GLOBALS["DB_DSN"]},\n\tDataObject=".$dbc['driver'].":host=".$dbc['host'].";dbname=".$dbc['database']."\n");                        
         }
 	if (isset($GLOBALS["DB_DBNAME"])){
             if ($GLOBALS["DB_DBNAME"]!=$dbc['database'])
-                throw new Exception("Database Name Mismatch! Globals={$GLOBALS["DB_DBNAME"]}, DataObject={$dbc['database']}");                        
+                throw new Exception("Database Name Mismatch!\n\tGlobals={$GLOBALS["DB_DBNAME"]},\n\tDataObject={$dbc['database']}\n");                        
         }
         //Need to do Variable Replacement
         foreach ($dbc as $key=>$value){
@@ -120,7 +127,7 @@
         return $dbc;
     }
     
-    function MigrateDatabase($target){        
+    function MigrateDatabase($target="Development",$iniFile=""){        
         global $config,$ips,$fps;
         //Need to add path to phpdbmigrate so we can use it
         ini_set("include_path",ini_get("include_path")
@@ -138,16 +145,27 @@
                 "return_type" => "\n",
                 );
         $lib = new PHPDbMigrate($phpdbmigrate);
-        $lib->run(NULL,$target);
+        try {
+            $lib->run(NULL,$target);
+        } catch (Exception $e) {
+            if ($lib->changed){
+                print_pre("Changed {$e->getMessage()}\n");
+                reCreateTables($iniFile);
+            }
+            if ($e->getCode()) { 
+                throw new PEAR_Exception($e->getMessage(), $e->getCode()); 
+            } 
+            throw new PEAR_Exception($e->getMessage()); 
+        }
     }
     
     function Safe_DataObject_factory($table){
-            /*
-             * I  have a problem on Linux as I like to Camel Case my Table Names,
-            * This wraps then safely and removes the issue
-            */
-            $table=ucfirst(strtolower($table));
-            return PEARError(DB_DataObject::factory($table));
+        /*
+         * I  have a problem on Linux as I like to Camel Case my Table Names,
+        * This wraps then safely and removes the issue
+        */
+        $table=ucfirst(strtolower($table));
+        return PEARError(DB_DataObject::factory($table));
     }
 
     function field($data){
@@ -168,8 +186,8 @@
             }	
             else $sql=trim($template);
             if ($sql=="") return;
-            error_log($sql);
-            PEARError($db->query($sql));
+            //error_log($sql);
+            PEARError($db->query($sql),$sql);
     }
 
     function executeMultiple($sql,$values=array(array())){
@@ -232,7 +250,7 @@
 
     function truncateTable($table){
             global $db;
-            
+/*            
             $db->exec("SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checking.");
             try {
                 $db->exec("truncate table $table");
@@ -240,6 +258,12 @@
                 error_log($e->getMessage());
             }
             $db->exec("SET FOREIGN_KEY_CHECKS = 1; -- Enable foreign key checking.");
+ */
+            $do=  Safe_DataObject_factory($table);
+            $do->find();
+            while ($do->fetch()){
+                $do->delete();
+            }
     }
 
 function resetDB(){
@@ -255,20 +279,25 @@ function resetDB(){
     }
 }
 
+function reCreateTables($iniFile){
+    global $php_exe,$createTables_php;
+    echo "Reload DB<br/>\n";
+    $cmd= $php_exe." $createTables_php \"$iniFile\"";
+    echo "May need to $cmd<br/>\n";
+}
+
 function reloadDB($script){
     global $root_path,$do_ini;
 
     $work=split(";\r",file_get_contents($script));
-            foreach($work as $sql){ 	
-                    if (trim($sql)<>""){
-                            debug_print($sql);
-                            query("$sql;"); 		
-                            print "<hr/>";
-                    }
-            }
-            print "<pre>";
-            passthru('C:\xampp\php\php.exe C:\xampp\php\PEAR\DB\DataObject\createTables.php "'.buildpath($root_path,"database",$do_ini).'"');
-            print "</pre>";		
+    foreach($work as $sql){ 	
+        if (trim($sql)<>""){
+            debug_print($sql);
+            query("$sql;"); 		
+            print "<hr/>";
+        }
+    }
+    reCreateTables($do_ini);
 }
 
 $sl_count=0;

@@ -15,7 +15,8 @@ class PHPDbMigrate {
                                 'add_index',
                                 'code');
     var $db = NULL;
-
+    var $changed=false;
+    
     function PHPDbMigrate($config) {
         $this->config = $config;
     }
@@ -98,6 +99,7 @@ class PHPDbMigrate {
                     $this->db->update_schema($old_version);
                 } else {
                     $this->db->update_schema($files_list[$i]['number']);
+                    $this->changed=true;
                 }
                 $executable->logException($e->getMessage());
                 throw new Exception("database fail: ".$e->getMessage());
@@ -106,14 +108,18 @@ class PHPDbMigrate {
 
         if ((int)$version == 0 && sizeof($files_list) - 1 == $i) {
             $this->db->update_schema($version);
+            $this->changed=true;
         } else {
             if ($up == "up") {
                 $this->db->update_schema($files_list[$i]['number']);
+                $this->changed=true;
             } else {
                 if (($i - 1) >= 0) {
                     $this->db->update_schema($files_list[$i - 1]['number']);
+                    $this->changed=true;
                 } else {
                     $this->db->update_schema($files_list[$i + 1]['number']);
+                    $this->changed=true;
                 }
             }
         }

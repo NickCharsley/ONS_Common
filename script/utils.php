@@ -29,7 +29,7 @@ if (strpos($system,'.adhoc')>0){
         $GLOBALS['TESTMODE']="adhoc";
 }
 
-        @require_once 'ezc/Base/base.php';
+        require_once 'ezc/Base/base.php';
 
         function startTimer($type='page'){
                 global $start_time;
@@ -322,15 +322,15 @@ function createUUID() {
    }
 
    function write_ini_file($filename,$sections){
-    $handle=fopen($filename, "w");
+    $ini="";
     foreach ($sections as $section=>$items){
-        fwrite($handle, "[$section]\n");
+        $ini.= "[$section]\n";
         foreach ($items as $item=>$value){
-            fwrite($handle, "$item=$value\n");
+            $ini.="$item=$value\n";
         }
-        fwrite($handle, "\n");
+        $ini.= "\n";
     }
-    fclose($handle);
+    file_put_contents($filename, $ini);
    }
 
    function stopTimer($type){
@@ -450,7 +450,7 @@ function PEAR_ErrorToPEAR_Exception($err)
 
     // log or echo as you please
     error_log($msg);
-        print($msg);    
+    print_pre($msg);    
  }
 
  function flush_buffers(){

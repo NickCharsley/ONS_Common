@@ -1,0 +1,51 @@
+============= Calling File ==================
+<?php
+require_once('phpdbmigrate.php');
+
+$config = array(
+                "development" => array(
+                    "db" => array(
+                        "driver" => "Mysql",
+                        "host" => "localhost",
+                        "user" => "",
+                        "password" => "",
+                        "database" => ""
+                                  )
+                                        ),
+                "test" => array("db" => ""),
+                "production" => array("db" => ""),
+                "migrations_path" => "migrations",
+                "return_type" => "\n"
+                );
+
+$lib = new PHPDbMigrate($config);
+$lib->run(NULL,"development");
+?>
+
+=========== Migration File ===================
+[up]
+
+create_table: my_table, engine : InnoDB, char_set : latin1
+    primary_key: id
+    column: id, type : int, length : 11, not_null : true, auto : true
+    column: some_column, type : varchar, length : 30, default : NULL
+    column: another_column, type : varchar, length : 255, default : NULL
+    column: updated_at, type : datetime, default : NULL
+    column: created_at, type : datetime, default : NULL
+
+add_index: my_table, some_column_items, using : btree, columns : [some_column]
+add_index: my_table, another_column_items, using : btree, columns : [some_column, another_column]
+
+add_column: my_table, anchor_text, type : varchar, length : 11, after : another_column
+add_column: my_table, target, type : varchar, length : 8, default : _blank, after : anchor_text
+remove_index: my_table, some_column_items
+
+code:
+//each line must end with a semi-colon!
+ error_log( "This is cool";
+
+[down]
+sql: TRUNCATE my_table
+remove_column: my_table, anchor_text
+remove_column: my_table, target
+drop_table: my_table

@@ -10,12 +10,12 @@ class DropTable extends Base {
     }
 
     function execute($linefeed = "\n") {
-        error_log("Running drop table: {$this->table}");
+         error_log( "Running drop table: {$this->table}{$linefeed}");
         $this->db->execute_raw_query($this->query);
         return True;
     }
 
-    private function _determine_attributes($query) {
+    function _determine_attributes($query) {
         $query = $this->_trim_table($query);
         return $this->db->format_drop_table($this->table);
     }
